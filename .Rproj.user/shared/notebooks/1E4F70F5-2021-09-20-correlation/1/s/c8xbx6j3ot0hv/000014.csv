@@ -1,0 +1,15 @@
+"0","plot_individual_kinase_human_mouse_correlation + ggtitle(""Human-Rodent Correlation (Individual kinases)"") + xlab(""Human kinase score"") + ylab(""Rodent kinase score"")"
+"2","Warning:"
+"2"," Use of `jfc_individual_kinase_comparison_data$human_mean_final_score` is discouraged. Use `human_mean_final_score` instead.
+"
+"2","Warning:"
+"2"," Use of `jfc_individual_kinase_comparison_data$mouse_mean_final_score` is discouraged. Use `mouse_mean_final_score` instead.
+"
+"2","Warning:"
+"2"," Use of `jfc_individual_kinase_comparison_data$human_mean_final_score` is discouraged. Use `human_mean_final_score` instead.
+"
+"2","Warning:"
+"2"," Use of `jfc_individual_kinase_comparison_data$mouse_mean_final_score` is discouraged. Use `mouse_mean_final_score` instead.
+"
+"2","`geom_smooth()` using formula 'y ~ x'
+"

@@ -1,0 +1,6 @@
+"0","#Family"
+"0","ggpubr::ggqqplot(jfc_family_kinase_comparisone_data$human_avg_mean_final_score,"
+"0","                 xlim = c(-3,3),"
+"0","                 ylim = c(0,5),"
+"0","                 ylab = ""Human"", "
+"0","                 title = ""Kinase Families"")"

@@ -1,0 +1,16 @@
+"0","if(!require(devtools)) install.packages(""devtools"")"
+"2","Loading required package: devtools
+"
+"2","Loading required package: usethis
+"
+"0","devtools::install_github(""kassambara/ggpubr"")"
+"2","Skipping install of 'ggpubr' from a github remote, the SHA1 (ac5a01f5) has not changed since last install.
+  Use `force = TRUE` to force installation
+"
+"0","library(""ggpubr"")"
+"2","Loading required package: ggplot2
+"
+"2","Registered S3 method overwritten by 'data.table':
+  method           from
+  print.data.table     
+"
