@@ -1,0 +1,131 @@
+---
+title: "Exploring HPA Consensus Data"
+author: "Robert M Flight"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+## Purpose
+
+How exactly should we be using expression cutoffs in the Human Protein Atlas (HPA) consensus data set?
+
+```{r setup}
+library(dplyr)
+library(ggplot2)
+library(UpSetR)
+source(here::here("kea3_functions.R"))
+```
+
+## Data
+
+HPA consensus data downloaded on 2021-09-27.
+
+```{r load_hpa_expression}
+hpa_expression = read.table(here::here("hpa_data", "rna_consensus_2021-09-27.tsv"),
+                            header = TRUE, sep = "\t")
+hpa_expression = hpa_expression %>%
+  dplyr::mutate(logX = log1p(NX))
+```
+
+## Explore
+
+What does tissue specific expression look like?
+
+```{r plot_tissues}
+hpa_expression %>%
+  dplyr::filter(Tissue %in% c("liver", "lung", "testis")) %>%
+  ggplot(aes(x = logX)) +
+  geom_histogram(bins = 100) +
+  facet_wrap(~ Tissue, scales = "free_y", ncol = 1) +
+  labs(subtitle = "Counts of Log(X + 1) in different tissues")
+```
+
+OK, that's kinda cool.
+Looks like each tissue might have the same set of genes, just with zero's if there is no expression.
+
+```{r has_genes}
+hpa_expression %>%
+  dplyr::group_by(Tissue) %>%
+  dplyr::summarise(n = n()) %>%
+  dplyr::pull(n) %>%
+  unique()
+```
+
+Not quite.
+But close.
+
+OK, lets see how the counts of our genes look if we use a cutoff > 0.
+
+```{r greater_0}
+greater_0 = hpa_expression %>%
+  dplyr::filter(Tissue %in% c("lung", "liver", "testis")) %>%
+  split(., .$Tissue) %>%
+  purrr::map(., filter_hpa_expression, tissue = NULL, cutoff = 0.01)
+purrr::map_int(greater_0, ~ nrow(.x))
+
+min_values = purrr::map_dbl(greater_0, ~ min(.x$logX))
+min_values
+g0_lists = purrr::map(greater_0, ~ unique(.x$Gene.name))
+upset(fromList(g0_lists))
+```
+
+I've also tried using a tissue specific expression cutoff that tries to find the mode of the distribution, then uses the data on the high side to define a standard deviation (with mean of data replaced by the mode), and then apply X SDs in the negative direction to define a lower value cutoff for expression.
+
+```{r greater_2sd}
+greater_2sd = hpa_expression %>%
+  dplyr::filter(Tissue %in% c("lung", "liver", "testis")) %>%
+  split(., .$Tissue) %>%
+  purrr::map(., filter_hpa_expression, tissue = NULL, n_sd = 2)
+purrr::map_int(greater_2sd, ~ nrow(.x))
+
+g2sd_lists = purrr::map(greater_2sd, ~ unique(.x$Gene.name))
+g2sd_min = purrr::map_dbl(greater_2sd, ~ min(.x$logX))
+g2sd_min
+
+upset(fromList(g2sd_lists))
+```
+
+```{r greater_3sd}
+greater_3sd = hpa_expression %>%
+  dplyr::filter(Tissue %in% c("lung", "liver", "testis")) %>%
+  split(., .$Tissue) %>%
+  purrr::map(., filter_hpa_expression, tissue = NULL, n_sd = 3)
+purrr::map_int(greater_3sd, ~ nrow(.x))
+g3sd_min = purrr::map_dbl(greater_3sd, ~ min(.x$logX))
+g3sd_min
+g3sd_lists = purrr::map(greater_3sd, ~ unique(.x$Gene.name))
+
+upset(fromList(g3sd_lists))
+```
+
+So using 0, results in very little tissue specificity, using 2 SD is **much more** specific, and 3 SD is somewhere in between.
+Probably 3 SD is reasonable.
+
+Except that for liver, there are some really extreme values that seem to make the SD bigger than we might expect.
+So maybe 2 SD if we want to not just use > 0 for liver.
+
+Alternatively, what if we just used all the tissue data combined?
+
+```{r get_all_values}
+mode_sd_all = hpa_expression %>%
+  dplyr::filter(logX > 1) %>%
+  dplyr::pull(logX) %>%
+  calculate_mode_sd()
+
+all_min = mode_sd_all[1] - 2*mode_sd_all[2]
+names(all_min) = NULL
+all_min
+
+ggplot(hpa_expression, aes(x = logX)) +
+  geom_histogram(bins = 100) +
+  geom_vline(xintercept = mode_sd_all[1]) +
+  geom_vline(xintercept = all_min, color = "red") +
+  labs(subtitle = "All tissue expression, mode and min is 2 * SD.")
+```
+
+This, this looks extremely robust!
