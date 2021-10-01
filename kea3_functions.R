@@ -122,13 +122,20 @@ create_kea3_networks = function(){
   ppi_df2 = data.frame(from = ppi_df$to,
                        to = ppi_df$from,
                        weight = ppi_df$weight)
-  
   ppi_df$type = "ppi"
   ppi_df2$type = "ppi"
   ppi_full = rbind(ppi_df, ppi_df2)
   ks_graph = tidygraph::as_tbl_graph(ks_df)
   ppi_graph = tidygraph::as_tbl_graph(ppi_df)
   full_graph = tidygraph::graph_join(ks_graph, ppi_graph)
+  
+  all_kinases = unique(c(unlist(ks_names), unlist(ppi_names)))
+  full_graph = full_graph %>%
+    activate(nodes) %>%
+    mutate(type = case_when(
+      name %in% all_kinases ~ "kinase",
+      TRUE ~ "other"
+    ))
   return(full_graph)
 }
 
