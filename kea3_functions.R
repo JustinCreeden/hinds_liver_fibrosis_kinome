@@ -139,7 +139,59 @@ create_kea3_networks = function(){
   return(full_graph)
 }
 
-
+get_lfc = function(lfc_files){
+  all_lfc = purrr::map_dfr(lfc_files, function(in_file){
+    tmp_df = read.table(in_file, header = TRUE, sep = "\t",
+                        stringsAsFactors = FALSE)
+    if (grepl("ptk", in_file)) {
+      source = "PTK"
+    } else {
+      source = "STK"
+    }
+    tmp_df2 = tmp_df %>%
+      dplyr::mutate(peptide2 = gsub("_.*", "", Peptide)) %>%
+      dplyr::group_by(peptide2) %>%
+      dplyr::summarise(protein_mean_lfc = mean(LFC))
+    tmp_df2$source = source
+    tmp_df2
+  })
+  
+  dup_prots = all_lfc %>%
+    dplyr::group_by(peptide2) %>%
+    dplyr::summarise(n_prot = n()) %>%
+    dplyr::filter(n_prot > 1)
+  
+  bad_dups = all_lfc %>%
+    dplyr::filter(peptide2 %in% dup_prots$peptide2) %>%
+    dplyr::group_by(peptide2) %>%
+    dplyr::summarise(lfc_ratio = protein_mean_lfc[1] / protein_mean_lfc[2]) %>%
+    dplyr::filter(lfc_ratio < 0)
+  
+  good_dups = all_lfc %>%
+    dplyr::filter(peptide2 %in% dup_prots$peptide2) %>%
+    dplyr::group_by(peptide2) %>%
+    dplyr::summarise(lfc_ratio = protein_mean_lfc[1] / protein_mean_lfc[2]) %>%
+    dplyr::filter(lfc_ratio > 0)
+  
+  dup_2_single = all_lfc %>%
+    dplyr::filter(peptide2 %in% good_dups$peptide2) %>%
+    dplyr::group_by(peptide2) %>%
+    dplyr::slice(n = 1)
+  
+  all_lfc = all_lfc %>%
+    dplyr::filter(!(peptide2 %in% dup_prots$peptide2))
+  
+  all_lfc = rbind(all_lfc, dup_2_single)
+  
+  all_lfc = all_lfc %>%
+    dplyr::mutate(direction = dplyr::case_when(
+      protein_mean_lfc < 0 ~ "neg",
+      protein_mean_lfc > 0 ~ "pos"
+    ))
+  
+  all_lfc
+    
+}
 # kea3_networks = create_kea3_networks()
 # saveRDS(kea3_networks, file = here::here("kea3_datasets", "kea3_networks_2021-09-30.rds"))
 # rm(kea3_networks)
