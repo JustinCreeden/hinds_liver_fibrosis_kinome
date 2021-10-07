@@ -192,6 +192,65 @@ get_lfc = function(lfc_files){
   all_lfc
     
 }
+
+create_enriched_network = function(kea3_results, n_gene = 10, kea3_network, tissue_list){
+  genes_enrich = purrr::map_dfr(kea3_results, function(.x){
+    data.frame(gene = .x$`Integrated--meanRank`$TF[1:n_gene],
+               type = "kinase",
+               enrichment = "enriched")
+  })
+  genes_enrich = genes_enrich %>%
+    dplyr::filter(gene %in% tissue_list)
+  
+  # and overlapping genes, essentially the kinase targets
+  genes_overlaps = purrr::map_dfr(kea3_results,
+                                  function(.x){
+                                    overlap_genes = .x$`Integrated--meanRank`$Overlapping_Genes[1:n_gene]
+                                    all_over = unlist(strsplit(overlap_genes, ","))
+                                    data.frame(gene = all_over,
+                                               type = "target",
+                                               enrichment = "overlap")
+                                  }) %>%
+    unique()
+  rownames(genes_overlaps) = NULL
+  genes_overlaps = genes_overlaps %>%
+    dplyr::filter(gene %in% tissue_list)
+  
+  genes_overlaps = genes_overlaps %>%
+    dplyr::filter(!(gene %in% genes_enrich$gene))
+  
+  enrich_results = rbind(genes_enrich, genes_overlaps) %>%
+    dplyr::filter(gene %in% tissue_list)
+  
+  enrich_network = kea3_network %>%
+    activate(nodes) %>%
+    filter(name %in% enrich_results$gene) %>%
+    mutate(enriched = case_when(
+      name %in% genes_enrich$gene ~ "enriched",
+      TRUE ~ "overlap"
+    )) %>%
+    activate(edges) %>%
+    filter(weight > 1) %>%
+    activate(nodes) %>%
+    mutate(degree = local_size(order = 1, mindist = 1)) %>% # how many neighbors?
+    filter(degree > 1)
+  
+  enrich_network_ks = enrich_network %>%
+    activate(edges) %>%
+    filter(type %in% "kinase-substrate") %>%
+    activate(nodes) %>%
+    mutate(degree = local_size(order = 1, mindist = 1)) %>%
+    filter(degree > 1) %>%
+    mutate(type2 = case_when(
+      (type %in% "kinase") & (enriched %in% "enriched") ~ "kinase.E",
+      (type %in% "kinase") & (enriched %in% "overlap") ~ "kinase.O",
+      TRUE ~ "other"
+    ))
+  
+  list(genes = enrich_results, network = enrich_network_ks)
+  
+}
+
 # kea3_networks = create_kea3_networks()
 # saveRDS(kea3_networks, file = here::here("kea3_datasets", "kea3_networks_2021-09-30.rds"))
 # rm(kea3_networks)

@@ -123,94 +123,13 @@ In this one, we will use the **top ten** enriched kinases (see definitions above
 # changing names to make them easier to filter to.
 names(kea3_results) = c("PTK_Human", "PTK_Rodent", "STK_Human", "STK_Roden")
 
-# getting enriched kinases
-human_enrich = purrr::map_dfr(kea3_results[c("PTK_Human", "STK_Human")], function(.x){
-  data.frame(gene = .x$`Integrated--meanRank`$TF[1:10],
-             source = "human",
-             type = "kinase")
-})
-human_enrich = human_enrich %>%
-  dplyr::filter(gene %in% liver_expressed)
-
-# and overlapping genes, essentially the kinase targets
-human_overlaps = purrr::map_dfr(kea3_results[c("PTK_Human", "STK_Human")],
-                            function(.x){
-  overlap_genes = .x$`Integrated--meanRank`$Overlapping_Genes[1:10]
-  all_over = unlist(strsplit(overlap_genes, ","))
-  data.frame(gene = all_over,
-             source = "human",
-             type = "target")
-  }) %>%
-  unique()
-rownames(human_overlaps) = NULL
-human_overlaps = human_overlaps %>%
-  dplyr::filter(gene %in% liver_expressed)
-
-human_overlaps = human_overlaps %>%
-  dplyr::filter(!(gene %in% human_enrich))
-
-human_results = rbind(human_enrich, human_overlaps) %>%
-  dplyr::filter(gene %in% liver_expressed)
-
-human_network = kea3_network %>%
-  activate(nodes) %>%
-  filter(name %in% human_results$gene) %>%
-  mutate(enriched = case_when(
-    name %in% human_enrich$gene ~ "enriched",
-    TRUE ~ "overlap"
-  )) %>%
-  activate(edges) %>%
-  filter(weight > 1) %>% # do we have multiple evidence?
-  activate(nodes) %>%
-  mutate(degree = local_size(order = 1, mindist = 1)) %>% # how many neighbors?
-  filter(degree > 1)
-```
-
-OK, let's see what the network looks like?
-
-```{r human_network_v1}
-ggraph(human_network, layout = "fr") +
-  geom_edge_link(aes(color = type), arrow = arrow(length = unit(4, 'mm')),
-                 end_cap = circle(3, 'mm'),
-                 alpha = 0.5) +
-  geom_node_point(aes(color = type, shape = enriched, size = degree),
-                  alpha = 0.8) +
-  labs(subtitle = "Human KEA3 Results, PPI & Kinase-Targets")
-```
-
-As we can see from this plot, we have a hairball that is difficult to interpret.
-Even with labels, this is not likely to make much sense.
-
-As another solution, we will try another type of layout, and see if it helps.
-
-```{r human_network_hive}
-ggraph(human_network, layout = "hive", axis = type, sort.by = degree) +
-  geom_edge_hive(aes(color = type)) +
-  geom_axis_hive(aes(color = type)) +
-  coord_fixed()
-```
-
-Yeah, that doesn't help us at all, unfortunately.
-
-OK, we will try the hairball again, but remove any edges that aren't between Kinase-substrate, and then remove anything that isn't attached to something else.
-
-```{r human_network_kt}
-human_network_kt = human_network %>%
-  activate(edges) %>%
-  filter(type %in% "kinase-substrate") %>%
-  activate(nodes) %>%
-  mutate(degree = local_size(order = 1, mindist = 1)) %>%
-  filter(degree > 1) %>%
-  mutate(type2 = case_when(
-    (type %in% "kinase") & (enriched %in% "enriched") ~ "kinase.E",
-    (type %in% "kinase") & (enriched %in% "overlap") ~ "kinase.O",
-    TRUE ~ "other"
-  ))
+human_results = create_enriched_network(kea3_results[c("PTK_Human", "STK_Human")], n_gene = 10, kea3_network, liver_expressed)
 ```
 
 ```{r human_network_kt_graph, fig.width = 8, fig.height = 8}
 # this is in it's own chunk so we can set.seed and reproduce it.
 set.seed(123)
+human_network_kt = human_results$network
 ggraph(human_network_kt, layout = "graphopt") +
   geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
                  end_cap = circle(3, 'mm'),
