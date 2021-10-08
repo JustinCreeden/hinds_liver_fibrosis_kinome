@@ -340,11 +340,11 @@ subset_network_alpha = function(full_network, subset_results, keep_network = c("
   
   subset_network = subset_network %>%
     activate(nodes) %>%
-    mutate(TypeSource = case_when(
+    mutate(TypeSource = as.factor(case_when(
       name %in% subset_source$kinase.E ~ "kinase.E",
       name %in% subset_source$kinase.O ~ "kinase.O",
       name %in% subset_source$other ~ "other",
-      TRUE ~ ""
-    ))
+      TRUE ~ "NA"
+    )))
   subset_network
 }
