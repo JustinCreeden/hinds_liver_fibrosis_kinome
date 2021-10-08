@@ -35,6 +35,10 @@ Finally, for each annotation source, they do have the underlying raw p-values an
 ## Data
 
 ```{r setup}
+library(tidygraph)
+library(dplyr)
+library(ggraph)
+knitr::opts_chunk$set(fig.width = 8, fig.height = 8)
 source(here::here("kea3_functions.R"))
 save_loc = here::here("kea3_enrichment_2021-09-29")
 ```
@@ -121,38 +125,81 @@ In this one, we will use the **top ten** enriched kinases (see definitions above
 
 ```{r kea3_results}
 # changing names to make them easier to filter to.
-names(kea3_results) = c("PTK_Human", "PTK_Rodent", "STK_Human", "STK_Roden")
+names(kea3_results) = c("PTK_Human", "PTK_Mouse", "STK_Human", "STK_Mouse")
 
 human_results = create_enriched_network(kea3_results[c("PTK_Human", "STK_Human")], n_gene = 10, kea3_network, liver_expressed)
 ```
 
-```{r human_network_kt_graph, fig.width = 8, fig.height = 8}
-# this is in it's own chunk so we can set.seed and reproduce it.
+```{r mouse_results}
+mouse_results = create_enriched_network(kea3_results[c("PTK_Mouse", "STK_Mouse")], n_gene = 10, kea3_network, liver_expressed)
+```
+
+```{r full_results}
+all_results = create_enriched_network(kea3_results, n_gene = 10, kea3_network, liver_expressed)
+
+all_results_source = annotate_full_network(all_results$network, human_results$network, mouse_results$network, "human", "mouse")
+```
+
+What we've done is pull the genes from all the enrichment results, and create a single network from all of those, and then we can lay out the comparison networks based on that, with the edges and nodes that are in the specific networks grayed out or see through.
+Hopefully.
+
+Here is the full network with all results from both organisms.
+
+```{r full_graph}
 set.seed(123)
-human_network_kt = human_results$network
-ggraph(human_network_kt, layout = "graphopt") +
+ggraph(all_results_source, layout = "graphopt") +
   geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
                  end_cap = circle(3, 'mm'),
                  alpha = 0.5) +
-  geom_node_label(aes(label = name, color = type2)) +
-  labs(subtitle = "Human KEA3 Results, Kinase-Targets") +
+  geom_node_label(aes(label = name)) +
+  labs(subtitle = "KEA3 Results, Kinase-Targets") +
   theme(legend.position = c(0.1, 0.9))
 ```
 
-```{r save_human_kt, include = FALSE}
-Cairo::CairoPNG(here::here(save_loc, "human_network.png"),
-                width = 8, height = 8, units = "in",
-                dpi = 600, bg = "white")
+Now we want to subset to emphasize the human, with the type of node indicated as well.
+
+```{r human_network}
+human_subset = subset_network_alpha(all_results_source, human_results, c("both", "human"))
+
 set.seed(123)
-ggraph(human_network_kt, layout = "graphopt") +
+ggraph(human_subset, layout = "graphopt") +
   geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
                  end_cap = circle(3, 'mm'),
-                 alpha = 0.5) +
-  geom_node_label(aes(label = name, color = type2)) +
-  labs(subtitle = "Human KEA3 Results, Kinase-Targets") +
-  theme(legend.position = c(0.1, 0.9))
-dev.off()
+                 aes(alpha = alpha)) +
+  geom_node_label(aes(label = name, alpha = alpha,
+                      fill = TypeSource),
+                  label.size = NA) +
+  labs(subtitle = "Human KEA3 Network")
 ```
+
+```{r common_network}
+common_subset = subset_network_alpha(all_results_source, human_results, c("both"))
+
+set.seed(123)
+ggraph(common_subset, layout = "graphopt") +
+  geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
+                 end_cap = circle(3, 'mm'),
+                 aes(alpha = alpha)) +
+  geom_node_label(aes(label = name, alpha = alpha,
+                      fill = TypeSource),
+                  label.size = NA) +
+  labs(subtitle = "Common KEA3 Network")
+```
+
+```{r mouse_network}
+mouse_subset = subset_network_alpha(all_results_source, mouse_results,
+                                    c("both", "mouse"))
+set.seed(123)
+ggraph(mouse_subset, layout = "graphopt") +
+  geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
+                 end_cap = circle(3, 'mm'),
+                 aes(alpha = alpha)) +
+  geom_node_label(aes(label = name, alpha = alpha,
+                      fill = TypeSource),
+                  label.size = NA) +
+  labs(subtitle = "Mouse KEA3 Network")
+```
+
 
 * kinase.E: A kinase gene, and enriched from KEA3
 * kinase.O: A kinase gene, and overlapping in the input gene list

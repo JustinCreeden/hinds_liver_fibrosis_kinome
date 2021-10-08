@@ -1,8 +1,6 @@
 # functions used for reading in and processing data
 # for the KEA3 enrichment analysis.
-library(tidygraph)
-library(dplyr)
-library(ggraph)
+
 filter_hpa_expression = function(hpa_expression, tissue = NULL, cutoff = NULL, n_sd = 2){
   
   if (!is.null(tissue)) {
@@ -195,7 +193,7 @@ get_lfc = function(lfc_files){
 
 create_enriched_network = function(kea3_results, n_gene = 10, kea3_network, tissue_list){
   genes_enrich = purrr::map_dfr(kea3_results, function(.x){
-    data.frame(gene = .x$`Integrated--meanRank`$TF[1:n_gene],
+    data.frame(gene = .x$`Integrated--meanRank`$TF[seq_len(n_gene)],
                type = "kinase",
                enrichment = "enriched")
   })
@@ -205,7 +203,7 @@ create_enriched_network = function(kea3_results, n_gene = 10, kea3_network, tiss
   # and overlapping genes, essentially the kinase targets
   genes_overlaps = purrr::map_dfr(kea3_results,
                                   function(.x){
-                                    overlap_genes = .x$`Integrated--meanRank`$Overlapping_Genes[1:n_gene]
+                                    overlap_genes = .x$`Integrated--meanRank`$Overlapping_Genes[seq_len(n_gene)]
                                     all_over = unlist(strsplit(overlap_genes, ","))
                                     data.frame(gene = all_over,
                                                type = "target",
@@ -247,10 +245,106 @@ create_enriched_network = function(kea3_results, n_gene = 10, kea3_network, tiss
       TRUE ~ "other"
     ))
   
-  list(genes = enrich_results, network = enrich_network_ks)
+  node_info = enrich_network_ks %>%
+    activate(nodes) %>%
+    data.frame() %>%
+    dplyr::rename(TypeSource = type2)
+  
+  list(genes = node_info, network = enrich_network_ks)
   
 }
 
-# kea3_networks = create_kea3_networks()
-# saveRDS(kea3_networks, file = here::here("kea3_datasets", "kea3_networks_2021-09-30.rds"))
-# rm(kea3_networks)
+remove_nodes_other = function(full_network, keep_genes){
+  
+}
+
+annotate_full_network = function(full_network, network_1, network_2,
+                                 network_1_id = "human", network_2_id = "mouse"){
+  
+  full_nodes = full_network %>%
+    activate(nodes) %>%
+    data.frame()
+  full_edges = full_network %>%
+    activate(edges) %>%
+    data.frame()
+  full_edges$from = full_nodes$name[full_edges$from]
+  full_edges$to = full_nodes$name[full_edges$to]
+  full_edges$from_to = paste0(full_edges$from, ".", full_edges$to)
+  
+  
+  n1_edges = network_1 %>%
+    activate(edges) %>%
+    data.frame()
+  n1_nodes = network_1 %>%
+    activate(nodes) %>%
+    data.frame()
+  n1_edges$from = n1_nodes$name[n1_edges$from]
+  n1_edges$to = n1_nodes$name[n1_edges$to]
+  n1_edges$from_to = paste0(n1_edges$from, ".", n1_edges$to)
+  
+  n2_edges = network_2 %>%
+    activate(edges) %>%
+    data.frame()
+  n2_nodes = network_2 %>%
+    activate(nodes) %>%
+    data.frame()
+  n2_edges$from = n2_nodes$name[n2_edges$from]
+  n2_edges$to = n2_nodes$name[n2_edges$to]
+  n2_edges$from_to = paste0(n2_edges$from, ".", n2_edges$to)
+  
+  full_edges = full_edges %>%
+    dplyr::mutate(network = dplyr::case_when(
+      (from_to %in% n1_edges$from_to) & (from_to %in% n2_edges$from_to) ~ "both",
+      from_to %in% n1_edges$from_to ~ network_1_id,
+      from_to %in% n2_edges$from_to ~ network_2_id,
+    ))
+  
+  new_network = tidygraph::as_tbl_graph(full_edges)
+  new_network = new_network %>%
+    activate(nodes) %>%
+    mutate(network = case_when(
+      (name %in% n1_nodes$name) & (name %in% n2_nodes$name) ~ "both",
+      name %in% n1_nodes$name ~ network_1_id,
+      name %in% n2_nodes$name ~ network_2_id
+    ))
+  
+  new_network
+  
+}
+
+subset_network_alpha = function(full_network, subset_results, keep_network = c("both", "human"), exclude_alpha = 0){
+  # for testing the function and iterating through it
+  #full_network = all_results_source
+  #subset_results = human_results
+  #keep_network = c("both", "human")
+  #exclude_alpha = 0
+  
+  subset_source = split(subset_results$genes$name, subset_results$genes$TypeSource)
+  
+  subset_network = full_network %>%
+    activate(edges) %>%
+    mutate(alpha = case_when(
+      network %in% keep_network ~ 1,
+      TRUE ~ exclude_alpha
+    )) %>%
+    activate(nodes) %>%
+    mutate(alpha = case_when(
+      network %in% keep_network ~ 1,
+      TRUE ~ exclude_alpha
+    ),
+    org_name = name,
+    name = case_when(
+      alpha == 1 ~ org_name,
+      TRUE ~ ""
+    ))
+  
+  subset_network = subset_network %>%
+    activate(nodes) %>%
+    mutate(TypeSource = case_when(
+      name %in% subset_source$kinase.E ~ "kinase.E",
+      name %in% subset_source$kinase.O ~ "kinase.O",
+      name %in% subset_source$other ~ "other",
+      TRUE ~ ""
+    ))
+  subset_network
+}
