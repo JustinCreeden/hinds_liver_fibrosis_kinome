@@ -38,9 +38,12 @@ Finally, for each annotation source, they do have the underlying raw p-values an
 library(tidygraph)
 library(dplyr)
 library(ggraph)
+theme_set(cowplot::theme_cowplot())
 knitr::opts_chunk$set(fig.width = 8, fig.height = 8)
 source(here::here("kea3_functions.R"))
 save_loc = here::here("kea3_enrichment_2021-09-29")
+
+set_colors = scale_color_discrete()$palette(3)
 ```
 
 ### KEA3 Enriched Results
@@ -152,8 +155,7 @@ ggraph(all_results_source, layout = "graphopt") +
                  end_cap = circle(3, 'mm'),
                  alpha = 0.5) +
   geom_node_label(aes(label = name)) +
-  labs(subtitle = "KEA3 Results, Kinase-Targets") +
-  theme(legend.position = c(0.1, 0.9))
+  labs(subtitle = "KEA3 Results, Kinase-Targets") 
 ```
 
 Now we want to subset to emphasize the human, with the type of node indicated as well.
@@ -165,11 +167,15 @@ set.seed(123)
 ggraph(human_subset, layout = "graphopt") +
   geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
                  end_cap = circle(3, 'mm'),
-                 aes(alpha = alpha)) +
+                 aes(alpha = alpha),
+                 show.legend = FALSE) +
   geom_node_label(aes(label = name, alpha = alpha,
                       fill = TypeSource),
                   label.size = NA) +
-  labs(subtitle = "Human KEA3 Network")
+  labs(subtitle = "Human KEA3 Network") +
+  guides(alpha = "none") + 
+  scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
+  theme(legend.position = c(0.02, 0.92))
 ```
 
 ```{r common_network}
@@ -183,6 +189,8 @@ ggraph(common_subset, layout = "graphopt") +
   geom_node_label(aes(label = name, alpha = alpha,
                       fill = TypeSource),
                   label.size = NA) +
+  guides(alpha = "none") + 
+  scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
   labs(subtitle = "Common KEA3 Network")
 ```
 
@@ -197,6 +205,8 @@ ggraph(mouse_subset, layout = "graphopt") +
   geom_node_label(aes(label = name, alpha = alpha,
                       fill = TypeSource),
                   label.size = NA) +
+  guides(alpha = "none") + 
+  scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
   labs(subtitle = "Mouse KEA3 Network")
 ```
 
@@ -208,48 +218,6 @@ ggraph(mouse_subset, layout = "graphopt") +
 This is **starting** to look interpretable, I think.
 We can see the enriched kinases, any overlapping kinases that come up from the enrichment overlapping genes, and then the overlapping genes.
 I'm not sure what else should be here, so I'm going to stop.
-
-What if we add some fold-changes from the substrates on here?
-
-```{r add_lfc}
-human_lfc_files =  dir(here::here("input"), pattern = "human.*LFC", full.names = TRUE)
-human_lfc = get_lfc(human_lfc_files)
-human_lfc_list = split(human_lfc$peptide2, human_lfc$direction)
-human_network_kt2 = human_network_kt %>%
-  activate(nodes) %>%
-  dplyr::mutate(direction = dplyr::case_when(
-    name %in%human_lfc_list$neg ~ "neg",
-    name %in% human_lfc_list$pos ~ "pos",
-    TRUE ~ "none"
-  ))
-```
-
-```{r lfc_network, fig.width = 8, fig.height = 8}
-set.seed(123)
-ggraph(human_network_kt2, layout = "graphopt") +
-  geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
-                 end_cap = circle(3, 'mm'),
-                 alpha = 0.5) +
-  geom_node_label(aes(label = name, color = direction)) +
-  labs(subtitle = "Human KEA3 Results, Kinase-Targets") +
-  theme(legend.position = c(0.1, 0.9))
-```
-
-```{r save_human_lfc, include = FALSE}
-Cairo::CairoPNG(here::here(save_loc, "human_network_lfc.png"),
-                width = 8, height = 8, units = "in",
-                dpi = 600, bg = "white")
-set.seed(123)
-set.seed(123)
-ggraph(human_network_kt2, layout = "graphopt") +
-  geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
-                 end_cap = circle(3, 'mm'),
-                 alpha = 0.5) +
-  geom_node_label(aes(label = name, color = direction)) +
-  labs(subtitle = "Human KEA3 Results, Kinase-Targets") +
-  theme(legend.position = c(0.1, 0.9))
-dev.off()
-```
 
 
 ## Executive Summary
