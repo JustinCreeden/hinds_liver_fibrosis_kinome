@@ -348,3 +348,13 @@ subset_network_alpha = function(full_network, subset_results, keep_network = c("
     )))
   subset_network
 }
+
+export_plots = function(plot_list, ppt_file){
+  new_ppt = officer::read_pptx()
+  for (iplot in plot_list) {
+    p_dml = rvg::dml(ggobj = iplot)
+    new_ppt = officer::add_slide(new_ppt, layout = "Blank")
+    new_ppt = officer::ph_with(new_ppt, value = p_dml, location = officer::ph_location(width = 8, height = 8))
+  }
+  print(new_ppt, target = here::here(ppt_file))
+}

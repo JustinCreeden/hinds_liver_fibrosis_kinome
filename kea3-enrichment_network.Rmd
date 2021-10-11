@@ -164,7 +164,7 @@ Now we want to subset to emphasize the human, with the type of node indicated as
 human_subset = subset_network_alpha(all_results_source, human_results, c("both", "human"))
 
 set.seed(123)
-ggraph(human_subset, layout = "graphopt") +
+human_network = ggraph(human_subset, layout = "graphopt") +
   geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
                  end_cap = circle(3, 'mm'),
                  aes(alpha = alpha),
@@ -176,40 +176,52 @@ ggraph(human_subset, layout = "graphopt") +
   guides(alpha = "none") + 
   scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
   theme(legend.position = c(0.02, 0.92))
+human_network
 ```
 
 ```{r common_network}
 common_subset = subset_network_alpha(all_results_source, human_results, c("both"))
 
 set.seed(123)
-ggraph(common_subset, layout = "graphopt") +
+common_network = ggraph(common_subset, layout = "graphopt") +
   geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
                  end_cap = circle(3, 'mm'),
-                 aes(alpha = alpha)) +
+                 aes(alpha = alpha),
+                 show.legend = FALSE) +
   geom_node_label(aes(label = name, alpha = alpha,
                       fill = TypeSource),
                   label.size = NA) +
+  labs(subtitle = "Human KEA3 Network") +
   guides(alpha = "none") + 
   scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
-  labs(subtitle = "Common KEA3 Network")
+  theme(legend.position = c(0.02, 0.92))
+common_network
 ```
 
 ```{r mouse_network}
 mouse_subset = subset_network_alpha(all_results_source, mouse_results,
                                     c("both", "mouse"))
 set.seed(123)
-ggraph(mouse_subset, layout = "graphopt") +
+mouse_network = ggraph(mouse_subset, layout = "graphopt") +
   geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
                  end_cap = circle(3, 'mm'),
-                 aes(alpha = alpha)) +
+                 aes(alpha = alpha),
+                 show.legend = FALSE) +
   geom_node_label(aes(label = name, alpha = alpha,
                       fill = TypeSource),
                   label.size = NA) +
+  labs(subtitle = "Human KEA3 Network") +
   guides(alpha = "none") + 
   scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
-  labs(subtitle = "Mouse KEA3 Network")
+  theme(legend.position = c(0.02, 0.92))
+mouse_network
 ```
 
+### Add Fold-Changes
+
+```{r fold_changes}
+
+```
 
 * kinase.E: A kinase gene, and enriched from KEA3
 * kinase.O: A kinase gene, and overlapping in the input gene list
@@ -219,6 +231,14 @@ This is **starting** to look interpretable, I think.
 We can see the enriched kinases, any overlapping kinases that come up from the enrichment overlapping genes, and then the overlapping genes.
 I'm not sure what else should be here, so I'm going to stop.
 
+### Export Plots
+
+```{r export_plots}
+plot_list = list(human = human_network,
+                 common = common_network,
+                 mouse = mouse_network)
+export_plots(plot_list, "network_plots.pptx")
+```
 
 ## Executive Summary
 
