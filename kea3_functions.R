@@ -358,3 +358,38 @@ export_plots = function(plot_list, ppt_file){
   }
   print(new_ppt, target = here::here(ppt_file))
 }
+
+get_kinase_lfc = function(){
+  mapping = c("Q" = "\\[theta\\]", "D" = "\\[delta\\]", "G" = "\\[gamma\\]", 
+              "H" = "\\[eta\\]", "I" = "\\[iota\\]", "E" = "\\[epsilon\\]", 
+              "Z" = "\\[zeta\\]", "A" = "\\[alpha\\]", "B" = "\\[beta\\]")
+  lfc_dir = here::here("input/2021_10_07-Justin-Data-Deposit/UKA derived output fold-changes")
+  lfc_files = dir(lfc_dir, pattern = "txt$", full.names = TRUE)
+  
+  lfc_values = purrr::map_df(lfc_files, function(.x){
+    df = read.table(.x, header = TRUE, sep = "\t")
+    if (grepl("human", .x)) {
+      df$organism = "Human"
+    } else {
+      df$organism = "Mouse"
+    }
+    
+    if (grepl("PTK", .x)) {
+      df$type = "PTK"
+    } else {
+      df$type = "STK"
+    }
+    df
+  })
+  lfc_values$KN2 = lfc_values$Kinase.Name
+  for (imapping in names(mapping)) {
+    has_map = grepl(mapping[imapping], lfc_values$Kinase.Name)
+    lfc_values[has_map, "KN2"] = gsub(mapping[imapping], imapping, lfc_values[has_map, "Kinase.Name"])
+  }
+  lfc_values$name = toupper(lfc_values$KN2)
+  lfc_values$LFC = lfc_values$Mean.Final.Score
+  split_lfc = split(lfc_values[, c("name", "LFC")], lfc_values$organism)
+  lfc_out = dplyr::left_join(split_lfc$Mouse, split_lfc$Human, by = "name",
+                             suffix = c(".Mouse", ".Human"))
+  lfc_out
+}
