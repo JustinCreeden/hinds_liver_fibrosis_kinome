@@ -87,6 +87,25 @@ create_kea3_networks = function(){
     }
   }
   
+  ppi_matrix = matrix(0, nrow = length(all_ppi), ncol = length(all_ppi))
+  rownames(ppi_matrix) = colnames(ppi_matrix) = all_ppi
+  for (ippi in ppi_data) {
+    for (ppi_int in names(ippi)) {
+      #message(ppi_int)
+      if (ppi_int %in% rownames(ks_matrix)){
+        ks_tmp = ks_matrix[ppi_int, ]
+        ks_match = intersect(names(ks_tmp)[ks_tmp > 0], ippi[[ppi_int]])
+        ppi_novel = setdiff(ippi[[ppi_int]], names(ks_tmp)[ks_tmp > 0])
+        ks_matrix[ks_match, ppi_int] = ks_matrix[ks_match, ppi_int] + 1
+        
+      } else {
+        ppi_novel = ippi[[ppi_int]]
+      }
+      ppi_matrix[ppi_novel, ppi_int] = ppi_matrix[ppi_novel, ppi_int] + 1
+    }
+  }
+  
+  
   ks_df = purrr::map_dfr(colnames(ks_matrix), function(col_name){
     tmp_col = ks_matrix[, col_name]
     tmp_col = tmp_col[tmp_col > 0]
@@ -99,14 +118,6 @@ create_kea3_networks = function(){
   })
   ks_df$type = "kinase-substrate"
   
-  ppi_matrix = matrix(0, nrow = length(all_ppi), ncol = length(all_ppi))
-  rownames(ppi_matrix) = colnames(ppi_matrix) = all_ppi
-  for (ippi in ppi_data) {
-    for (ppi_int in names(ippi)) {
-      #message(ppi_int)
-      ppi_matrix[ppi_int, ippi[[ppi_int]]] = ppi_matrix[ppi_int, ippi[[ppi_int]]] + 1
-    }
-  }
   ppi_df = purrr::map_dfr(colnames(ppi_matrix), function(col_name){
     tmp_col = ppi_matrix[, col_name]
     tmp_col = tmp_col[tmp_col > 0]
@@ -392,4 +403,102 @@ get_kinase_lfc = function(){
   lfc_out = dplyr::left_join(split_lfc$Mouse, split_lfc$Human, by = "name",
                              suffix = c(".Mouse", ".Human"))
   lfc_out
+}
+
+# given a graph, a set of nodes, and a minimum edge weight
+# to filter out low confidence edges, subset to the provided
+# nodes and their immediate neighbors.
+subset_nodes_neighbors = function(in_graph, nodes = NULL, edge_min = 1, edge_type = "kinase-substrate"){
+  if (is.null(nodes)) {
+    stop("nodes = NULL\nYou didn't provide which nodes you want to start with!")
+  }
+  
+  filter_edges = in_graph %>%
+    activate(edges) %>%
+    filter(weight >= edge_min, type %in% edge_type) %>%
+    remove_stranded_nodes()
+  
+  all_nodes = filter_edges %>%
+    activate(nodes) %>%
+    data.frame()
+  
+  node_loc = which(all_nodes$name %in% nodes)
+  
+  neighbor_edges = filter_edges %>%
+    activate(edges) %>%
+    filter((from %in% node_loc) | (to %in% node_loc)) %>%
+    remove_stranded_nodes()
+  
+  neighbor_edges
+}
+
+remove_stranded_nodes = function(in_graph){
+  in_graph %>%
+    activate(nodes) %>%
+    mutate(degree = local_size(order = 1, mindist = 1)) %>%
+    filter(degree > 0)
+}
+
+read_raw_files = function(){
+  near_raw_dir = here::here("input/2021_10_07-Justin-Data-Deposit/Near-Raw-Data")
+  raw_files = dir(near_raw_dir, pattern = ".txt", full.names = TRUE)
+  
+  in_raw = function(raw_file){
+    raw_data = scan(raw_file, what = character(), sep = "\n", quiet = TRUE)
+    raw_data = raw_data[-1]
+    id_loc = raw_data %in% "ID"
+    raw_data = raw_data[!id_loc]
+    all_data = purrr::map_dfc(raw_data, function(raw_chr){
+      tmp_chr = strsplit(raw_chr, "\t")[[1]]
+      
+      top_chr = tmp_chr[c(1, 2)]
+      tmp_chr = tmp_chr[c(-1, -2)]
+      var_name = top_chr[nchar(top_chr) > 0]
+      
+      #message(var_name)
+      
+      if (!is.na(suppressWarnings(as.numeric(tmp_chr[1])))) {
+        out_var = as.numeric(tmp_chr)
+      } else {
+        out_var = tmp_chr
+      }
+      out_df = data.frame(v = out_var)
+      names(out_df) = var_name
+      out_df
+    })
+    all_data
+  }
+  
+  raw_data = purrr::map(raw_files, in_raw)
+  names(raw_data) = basename(raw_files)
+  raw_data
+}
+
+transform_raw_data = function(raw_data){
+  raw_full_info = data.frame(barcode = raw_data$Barcode,
+                             array = raw_data$Array,
+                             exposure = raw_data$`Exposure time`,
+                             cycle = raw_data$Cycle,
+                             sample_name = raw_data$`Sample name`,
+                             comment = raw_data$`Comment 1`) %>%
+    dplyr::mutate(replicate = case_when(
+      grepl("3$", sample_name) ~ "3",
+      grepl("2$", sample_name) ~ "2",
+      grepl("1$", sample_name) ~ "1"
+    ))
+  
+  raw_info = raw_full_info %>%
+    dplyr::select(barcode, array, sample_name, comment, replicate) %>%
+    unique()
+  last_ref = max(which(grepl("REF.*", names(raw_data))))
+  start_data = last_ref + 1
+  end_data = ncol(raw_data)
+  raw_vals = raw_data[, seq(start_data, end_data)]
+  raw_info_vals = cbind(raw_full_info, raw_vals)
+  
+  raw_long_values = raw_info_vals %>%
+    tidyr::pivot_longer(c(-barcode, -array, -exposure, -cycle, -sample_name, -comment, -replicate), names_to = "peptide")
+  raw_long_values = raw_long_values %>%
+    dplyr::mutate(measure_id = paste0(peptide, ".", exposure, ".", cycle), sample_name2 = paste0(comment, "_", replicate))
+  list(data = raw_long_values, sample_info = raw_info)
 }
