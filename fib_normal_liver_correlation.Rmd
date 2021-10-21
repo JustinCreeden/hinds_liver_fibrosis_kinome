@@ -1,0 +1,192 @@
+---
+title: "Sample - Sample Correlations From Raw Data"
+author: "Robert M Flight"
+output:
+  word_document: default
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+There is an [Executive Summary](#executive-summary) at the end of this report.
+
+## Purpose
+
+To evaluate the correlation between various samples.
+
+## Data
+
+**Near Raw Data** provided by Justin.
+This data includes the intensity values for each peptide in each sample.
+
+
+```{r setup}
+library(tidygraph)
+library(dplyr)
+library(ggraph)
+library(visualizationQualityControl)
+library(ComplexHeatmap)
+library(ggraph)
+theme_set(cowplot::theme_cowplot())
+knitr::opts_chunk$set(fig.width = 8, fig.height = 8)
+source(here::here("kea3_functions.R"))
+save_loc = here::here("kea3_enrichment_2021-09-29")
+```
+
+```{r raw_data, warning=FALSE}
+raw_data = read_raw_files()
+names(raw_data) = c("PTK_median", "PTK_saturation", "STK_median", "STK_saturation")
+```
+
+### Transform for Correlation
+
+We will start working with the median values and see what happens.
+
+```{r median_transform}
+ptk_data = transform_raw_data(raw_data$PTK_median)
+ptk_info = ptk_data$sample_info
+ptk_info = ptk_info %>%
+  dplyr::mutate(sample_id = paste0(comment, "_", replicate))
+ptk_raw = ptk_data$data %>%
+  mutate(kinases = "ptk")
+
+stk_data = transform_raw_data(raw_data$STK_median)
+stk_info = stk_data$sample_info
+stk_raw = stk_data$data %>%
+  mutate(kinases = "stk")
+
+all_raw = rbind(ptk_raw, stk_raw)
+```
+
+First, we need to check what the distribution of intensity values looks like.
+
+```{r check_distribution}
+ggplot(all_raw, aes(x = value)) +
+  geom_histogram(bins = 100) +
+  facet_wrap(~ kinases, ncol = 1, scales = "free_y") +
+  labs(subtitle = "Histogram of all intensity values.")
+```
+
+This definitely looks log-normal, so we will transform, and use log10 so we can easily tell where to apply any kind of cutoff.
+
+```{r log_distribution}
+ggplot(all_raw, aes(x = log10(value))) +
+  geom_histogram(bins = 100) +
+  geom_vline(xintercept = log10(30), color = "red") +
+  facet_wrap(~ kinases, ncol = 1, scales = "free_y") +
+  labs(subtitle = "Histogram of Log10(intensity) values.",
+       caption = "I think ~ 30 is where things actually become useful here, as shown by the red line.")
+```
+
+Based on this, I actually wouldn't trust any intensity values < 30 (1.5) in the data for correlation.
+Given that, we will take all the intensity values < 30 and set them to 0, and treat them as missing for the ICI-Kendall-tau correlation calculation.
+
+```{r sample_correlation}
+all_raw = all_raw %>%
+  dplyr::mutate(measure_id2 = case_when(
+    kinases %in% "ptk" ~ paste0("p.", measure_id),
+    kinases %in% "stk" ~ paste0("s.", measure_id)
+  ))
+sample_wise = all_raw %>%
+  dplyr::select(sample_name2, value, measure_id2) %>%
+  tidyr::pivot_wider(id_cols = measure_id2,
+                     names_from = sample_name2,
+                     values_from = value)
+
+sample_matrix = sample_wise %>%
+  dplyr::select(-measure_id2) %>%
+  as.matrix()
+sample_matrix[sample_matrix < 30] = 0
+sample_cor = ICIKendallTau::ici_kendalltau(t(sample_matrix), global_na = c(NA, 0), perspective = "global")$cor
+
+sample_order = similarity_reorder(sample_cor, transform = "sub_1")
+sample_dendrogram = tidygraph::as_tbl_graph(sample_order$dendrogram)
+ggraph(sample_dendrogram, 'dendrogram', height = height) +
+  geom_edge_elbow() +
+  geom_node_text(aes(label = label, filter = leaf), angle = 90,
+                 nudge_y = -0.02) +
+  scale_y_continuous(expand = expansion(mult = 0.1, 0))
+```
+
+Cool!
+Everything seems to cluster together by liver status.
+Note that this only happens after combining both the **PTK** and **STK** data together, and replacing values < 30
+
+
+Let's look at the full correlation matrix and verify that this clustering is correct.
+
+```{r median_correlation}
+ptk_info = dplyr::left_join(data.frame(sample_id = colnames(sample_cor)), ptk_info, by = "sample_id")
+ptk_info = ptk_info %>%
+  dplyr::mutate(organism = case_when(
+    grepl("mouse", comment) ~ "mouse",
+    grepl("human", comment) ~ "human"
+  ),
+  condition = case_when(
+    grepl("normal", comment) ~ "normal",
+    grepl("fibrosis", comment) ~ "fibrosis"
+  ),
+  type = paste0(organism, "_", condition))
+
+col_map = circlize::colorRamp2(seq(0.7, 1, length.out = 20), viridis::viridis(20))
+col_annotation = HeatmapAnnotation(df = ptk_info[, "type", drop = FALSE], which = "column")
+
+
+Heatmap(sample_cor, col = col_map, "ICI-Kt", cluster_rows = sample_order$dendrogram,
+        cluster_columns = sample_order$dendrogram, top_annotation = col_annotation)
+```
+
+### Variance Measures
+
+```{r measure_variance}
+variance_measures = all_raw %>%
+  dplyr::select(comment, measure_id2, value) %>%
+  dplyr::group_by(comment, measure_id2) %>%
+  dplyr::summarise(Mean = mean(value),
+                   AbsDiff = abs(max(value) - min(value)),
+                   SD = sd(value),
+                   RSD = abs(SD / Mean),
+                   n = n())
+
+variance_long = variance_measures %>%
+  tidyr::pivot_longer(cols = c(-comment, -measure_id2, -Mean, -n), 
+                      names_to = "summary",
+                      values_to = "value")
+variance_long$summary = factor(variance_long$summary, levels = c("AbsDiff", "SD", "RSD"))
+
+ggplot(variance_long, aes(x = Mean, y = value)) +
+  geom_point() +
+  facet_wrap(vars(summary), scales = "free_y") +
+  labs(subtitle = "Absolute difference, relative standard deviation and standard\ndeviation as a function of mean across replicate samples for each peptide.", 
+       caption = "Absolute variances (AbsDiff and SD) increase as the mean increases, while RSD is relatively constant\nover a certain value. This is typical of intensity measurements, where the variance increases with\nmean intensity, but over a certain intensity, the relative standard deviation is stable around\na particular value.")
+
+p_rsd = variance_measures %>%
+  dplyr::filter(Mean >= 30) %>%
+  ggplot(aes(x = RSD)) + 
+  geom_histogram(bins = 100)
+
+rsd_density = variance_measures %>%
+  dplyr::filter(Mean > 2) %>%
+  dplyr::pull(RSD) %>%
+  density()
+rsd_mode = rsd_density$x[which.max(rsd_density$y)]
+
+p_rsd + 
+  geom_vline(xintercept = rsd_mode, color = "red") +
+  coord_cartesian(expand = FALSE) +
+  geom_text(label = paste0("Mode: ", format(rsd_mode, digits = 2)), x = 4, y = 3000) +
+  labs(subtitle = "Histogram of RSD for peptide spots with an mean signal >= 30.")
+```
+
+So this is nice, the **relative standard deviation** is fairly small, only `r format(rsd_mode, digits = 2)`.
+
+### Translation to Log-Fold-Changes
+
+Can we translate these to fold-changes?
+
+```{r label}
+
+```
