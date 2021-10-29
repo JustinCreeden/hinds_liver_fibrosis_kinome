@@ -21,6 +21,26 @@ To evaluate the correlation between various samples.
 
 **Near Raw Data** provided by Justin.
 This data includes the intensity values for each peptide in each sample.
+What the PamGene instrument does, based on this data and the description of the instrument from the manual, is:
+
+  1. Wash sample onto the appropriate array on the chip (cycle).
+  1. Take intensity measurements over time (exposure time).
+  1. Repeat over multiple cycles and exposure times.
+  
+So this near raw data is median, background corrected intensities for each peptide in each sample in each array of each chip, over cycles and exposure times.
+The cycles and exposure times are treated as independent measures for each peptide for this analysis, giving us extra measures to use for correlation and log-fold-changes.
+
+## Methods
+
+We imported nearly raw data provided from the PamGene instrument that includes cycle and exposure time for each peptide on each array and chip.
+Inspection of the log-intensities determined that values less than 30 are likely to be unreliable.
+Before correlation analysis, values less than 30 were replaced with zero.
+Sample-sample correlations were calculated using information-content-informed Kendall-tau (ICI-Kt, package version 1.5, Flight, R.M.; Moseley, H.N.B. ICIKendallTau. Available online: https://github.com/MoseleyBioinformaticsLab/ICIKendallTau.), treating zero as missing values.
+Only features that had a non-missing value (> 0) in at least one of the samples were included.
+Clustering of samples used 1 - ICI-Kt as the distance, and then the dendrogram was sorted using dendsort with min type sorting (Sakai, R.; Winand, R.; Verbeiren, T.; Moere, A.V.; Aerts, J. dendsort: modular leaf ordering methods for dendrogram representations in R. F1000Research 2014, 3.).
+Means, absolute differences between largest and smallest, standard deviations (SD) and relative standard deviations (RSD) were calculated among the three technical replicates for each pooled sample.
+The RSD mode was calculated using the replicates where the average mean was greater than or equal to 30.
+All calculations were performed using R version 4.1.0 (Ihaka, R.; Gentleman, R. R: a language for data analysis and graphics. Journal of computational and graphical statistics 1996, 5, 299-314.)
 
 
 ```{r setup}
@@ -30,6 +50,7 @@ library(ggraph)
 library(visualizationQualityControl)
 library(ComplexHeatmap)
 library(ggraph)
+library(flextable)
 theme_set(cowplot::theme_cowplot())
 knitr::opts_chunk$set(fig.width = 8, fig.height = 8)
 source(here::here("kea3_functions.R"))
@@ -100,7 +121,12 @@ sample_matrix = sample_wise %>%
   dplyr::select(-measure_id2) %>%
   as.matrix()
 sample_matrix[sample_matrix < 30] = 0
-sample_cor = ICIKendallTau::ici_kendalltau(t(sample_matrix), global_na = c(NA, 0), perspective = "global")$cor
+is_1 = apply(sample_matrix, 1, function(.x){
+  sum(.x > 0) > 0
+})
+sample_matrix = sample_matrix[is_1, ]
+sample_cor_data = ICIKendallTau::ici_kendalltau(t(sample_matrix), global_na = c(NA, 0), perspective = "global")
+sample_cor = sample_cor_data$cor
 
 sample_order = similarity_reorder(sample_cor, transform = "sub_1")
 sample_dendrogram = tidygraph::as_tbl_graph(sample_order$dendrogram)
@@ -113,7 +139,7 @@ ggraph(sample_dendrogram, 'dendrogram', height = height) +
 
 Cool!
 Everything seems to cluster together by liver status.
-Note that this only happens after combining both the **PTK** and **STK** data together, and replacing values < 30
+Note that this only happens after combining both the **PTK** and **STK** data together, and replacing values < 30, and removing entries that are < 30 across all the samples, leaving us with `r nrow(sample_matrix)`.
 
 
 Let's look at the full correlation matrix and verify that this clustering is correct.
@@ -126,17 +152,45 @@ ptk_info = ptk_info %>%
     grepl("human", comment) ~ "human"
   ),
   condition = case_when(
-    grepl("normal", comment) ~ "normal",
+    grepl("normal", comment) ~ "control",
     grepl("fibrosis", comment) ~ "fibrosis"
   ),
   type = paste0(organism, "_", condition))
 
 col_map = circlize::colorRamp2(seq(0.7, 1, length.out = 20), viridis::viridis(20))
-col_annotation = HeatmapAnnotation(df = ptk_info[, "type", drop = FALSE], which = "column")
+annote_cols = c("human_fibrosis" = "#C00000",
+                "mouse_fibrosis" = "#404040",
+                "human_control" = "#E6B9B8",
+                "mouse_control" = "#BFBFBF")
+#names(annote_cols) = unique(ptk_info$type)
+col_annotation = HeatmapAnnotation(df = ptk_info[, "type", drop = FALSE], which = "column", col = list(type = annote_cols), show_annotation_name = FALSE)
+
+row_annotation = HeatmapAnnotation(df = ptk_info[, "type", drop = FALSE], which = "row", col = list(type = annote_cols), show_annotation_name = FALSE, show_legend = FALSE)
 
 
-Heatmap(sample_cor, col = col_map, "ICI-Kt", cluster_rows = sample_order$dendrogram,
-        cluster_columns = sample_order$dendrogram, top_annotation = col_annotation)
+sample_sample_heatmap = Heatmap(sample_cor, col = col_map, "ICI-Kt", cluster_rows = sample_order$dendrogram,
+        cluster_columns = sample_order$dendrogram, top_annotation = col_annotation,
+        left_annotation = row_annotation,
+        show_column_names = FALSE,
+        show_row_names = FALSE)
+draw(sample_sample_heatmap, merge_legend = TRUE)
+```
+
+Figure X. Sample-sample ICI-Kt correlation heatmap.
+Diagonal values represent the number of non-missing value in the sample.
+
+Note that **all** correlation p-values are < 2.2x10^16.
+
+What is the correlation within and between the groups of samples?
+
+```{r group_correlation}
+group_cor = median_class_correlations(sample_cor, ptk_info$type)
+group_cor_text = format(group_cor, digits = 2)
+group_cor_text[lower.tri(group_cor_text, diag = FALSE)] = ""
+
+group_cor_table = knitr::kable(group_cor_text, caption = "Median correlations within and between organism and liver state. Within liver state correlations across organisms are lower than within a liver state / organism combination, but higher than between liver state.")
+
+group_cor_table
 ```
 
 ### Variance Measures
@@ -187,6 +241,75 @@ So this is nice, the **relative standard deviation** is fairly small, only `r fo
 
 Can we translate these to fold-changes?
 
-```{r label}
+```{r calc_fold_changes}
+log_raw = all_raw %>%
+  mutate(hi_value = case_when(
+    value < 30 ~ 0,
+    TRUE ~ value
+  )) %>%
+  mutate(log_value = log(hi_value + 1))
 
+avg_raw = log_raw %>%
+  dplyr::select(comment, measure_id2, log_value) %>%
+  dplyr::group_by(comment, measure_id2) %>%
+  dplyr::summarise(mean = mean(log_value)) %>%
+  tidyr::pivot_wider(names_from = comment, values_from = mean)
+
+human_diff = avg_raw %>%
+  mutate(log_diff = e_human_liver_fibrosis - c_human_liver_normal, organism = "human")
+mouse_diff = avg_raw %>%
+  mutate(log_diff = e_mouse_liver_fibrosis - c_mouse_liver_normal,
+         organism = "mouse")
+all_diff = rbind(human_diff, mouse_diff)
+
+ggplot(all_diff, aes(x = log_diff)) + 
+  geom_histogram(bins = 100) +
+  facet_wrap(~ organism, ncol = 1) +
+  scale_y_continuous(limits = c(0, 500))
 ```
+
+Remember, these are not from the values spit out by PamGene, but based on the background-corrected, median values for each cycle and exposure, and then values < 30 imputed to zero and log-transformed.
+We average the values across the replicates, and then take the fibrotic - normal.
+
+
+```{r export_heatmap}
+set_flextable_defaults(digits = 2)
+big_border = fp_border_default(width = 2)
+group_cor_df = as.data.frame(group_cor) %>%
+  tibble::rownames_to_column("type") %>%
+  flextable() %>%
+  colformat_double() %>%
+  vline(border = big_border, j = 1, part = "all") %>%
+  autofit()
+  
+plot_list = list(correlation = sample_sample_heatmap,
+                 table = group_cor_df)
+export_plots(plot_list, "correlation_plots_2021-10-27.pptx")
+```
+
+## Executive Summary
+
+* Used the *nearly raw* data from PamGene for correlations.
+This contains the median, background corrected intensity data for each cycle and exposure for each peptide in both the STK and PTK samples.
+This results in `r nrow(sample_matrix)` features for sample-sample correlation.
+* Clean separation by liver condition and then by species.
+* All sample-sample correlations were significant, and below the machine precision of the computer (2.2x10^-16).
+* It's also clear that kinase activity is elevated in the liver fibrosis vs normal (see diagonal of heatmap).
+There are more missing features in the normal samples (lover correlation values on the diagonal).
+
+```{r show_correlation_matrix}
+group_cor_df
+```
+
+## Exported captions
+
+### Heatmap Figure
+
+Sample-sample correlation heatmap of replicate samples from human and mouse control and fibrotic liver samples.
+Diagonal entries represent the percentage of non-missing values in each sample.
+Correlations were calculated using ICI-Kt using features that had non-zero values in at least one sample.
+Feature values < 30 were treated as missing.
+
+### Table Caption
+
+Median ICI-Kt correlations among samples within a type (diagonal) and between types (off diagonal).
