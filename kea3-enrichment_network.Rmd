@@ -158,6 +158,27 @@ ggraph(all_results_source, layout = "graphopt") +
   labs(subtitle = "KEA3 Results, Kinase-Targets") 
 ```
 
+### Add LFC
+
+```{r add_log_fc}
+all_lfc = get_kinase_lfc()
+
+# min_mouse = 0.97
+# min_human = 0.57
+# 
+# all_nodes = all_results_source %>%
+#   activate(nodes) %>%
+#   data.frame() %>%
+#   select(name)
+# all_lfc = left_join(all_nodes, all_lfc, by = "name")
+# na_mouse = is.na(all_lfc$LFC.Mouse)
+# all_lfc[na_mouse, "LFC.Mouse"] = min_mouse
+# na_human = is.na(all_lfc$LFC.Human)
+# all_lfc[na_human, "LFC.Human"] = min_human
+
+all_results_source = left_join(all_results_source, all_lfc, by = "name")
+```
+
 Now we want to subset to emphasize the human, with the type of node indicated as well.
 
 ```{r human_network}
@@ -170,10 +191,11 @@ human_network = ggraph(human_subset, layout = "graphopt") +
                  aes(alpha = alpha),
                  show.legend = FALSE) +
   geom_node_label(aes(label = name, alpha = alpha,
-                      fill = TypeSource),
+                      fill = TypeSource,
+                      size = LFC.Human),
                   label.size = NA) +
   labs(subtitle = "Human KEA3 Network") +
-  guides(alpha = "none") + 
+  guides(alpha = "none", size = "none") + 
   scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
   theme(legend.position = c(0.02, 0.92))
 human_network
@@ -191,7 +213,7 @@ common_network = ggraph(common_subset, layout = "graphopt") +
   geom_node_label(aes(label = name, alpha = alpha,
                       fill = TypeSource),
                   label.size = NA) +
-  labs(subtitle = "Human KEA3 Network") +
+  labs(subtitle = "Common KEA3 Network") +
   guides(alpha = "none") + 
   scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
   theme(legend.position = c(0.02, 0.92))
@@ -208,24 +230,21 @@ mouse_network = ggraph(mouse_subset, layout = "graphopt") +
                  aes(alpha = alpha),
                  show.legend = FALSE) +
   geom_node_label(aes(label = name, alpha = alpha,
-                      fill = TypeSource),
+                      fill = TypeSource,
+                      size = LFC.Mouse),
                   label.size = NA) +
-  labs(subtitle = "Human KEA3 Network") +
-  guides(alpha = "none") + 
+  labs(subtitle = "Mouse KEA3 Network") +
+  guides(alpha = "none", size = "none") + 
   scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
   theme(legend.position = c(0.02, 0.92))
 mouse_network
 ```
 
-### Add Fold-Changes
-
-```{r fold_changes}
-
-```
-
 * kinase.E: A kinase gene, and enriched from KEA3
 * kinase.O: A kinase gene, and overlapping in the input gene list
 * other: A gene that was in the input list, and was a *target* of the kinase in the KEA3 data.
+
+These networks are based on the KEA3 enrichment results, and the differential results.
 
 This is **starting** to look interpretable, I think.
 We can see the enriched kinases, any overlapping kinases that come up from the enrichment overlapping genes, and then the overlapping genes.
@@ -245,11 +264,6 @@ export_plots(plot_list, "network_plots.pptx")
 * Used the differential **human** peptide lists as input to KEA3 enrichment.
 * Used the KEA3 kinase-substrate lists to build a gene network.
 * Used the HPA consensus data to limit things to what is expressed in Liver.
-* Visualized the kinase-substrate network based on the enriched kinases and the differential genes / substrates (see above), with the direction of change for the differential genes applied.
-
-**This is a first pass only**. 
-We need to talk about whether there is anything to add or do differently.
-For example, we could think about directly taking the UKA results and putting them on the kinase-substrate network.
-We also have ideas on how to improve on the KEA3 analysis, but we don't know if that will improve anything on this or it's necessary for this manuscript.
+* Visualized the kinase-substrate network based on the enriched kinases and the differential genes / substrates (see above), with the log-fold-changes applied.
 
 Finally, after reading the KEA3 manuscript, we are not sure about whether the method they use for combining across datasets is appropriate, and their emphasis on selecting only the **top XXX** results.
