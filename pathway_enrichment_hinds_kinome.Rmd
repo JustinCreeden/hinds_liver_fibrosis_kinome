@@ -16,13 +16,13 @@ There is an [Executive Summary](#executive-summary) at the end of this report.
 ## Purpose
 
 To investigate pathway enrichment for Hinds kinome manuscript.
-We will use both Gene Ontology Biological Process as it is more comprehensive, and KEGG Pathways (see get_kegg_data.R for how we got the pathway annotations).
+We will use both Gene Ontology Biological Process as it is more comprehensive, and KEGG Pathways (see get_kegg_data.R for how we got the pathway annotations), and Reactome.
 
 ## Data
 
 Ideally all of the genes (peptides) measured on the arrays as well as the kinases that target them should constitute the background set.
-However, we don't have access to them at the moment, so we will start with the genome.
-The foreground set is the differential things spit out by UKA, and "possibly" the top significant kinases returned by KEA3.
+However, we don't have access to them at the moment, so we will start with the kinases in KEA3 and their targets.
+The foreground set is the differential things spit out by UKA.
 
 ## Methods
 
@@ -32,10 +32,17 @@ Kegg pathway annotations were pulled using the Bioconductor KEGGREST package on 
 ## Data
 
 ```{r setup}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+```{r load_stuff}
 library(tidygraph)
 library(dplyr)
 library(ggraph)
 library(categoryCompare2)
+library(KEGGREST)
+library(KEGGgraph)
+library(ICIKendallTau)
 theme_set(cowplot::theme_cowplot())
 knitr::opts_chunk$set(fig.width = 8, fig.height = 8)
 source(here::here("kea3_functions.R"))
@@ -48,6 +55,8 @@ names(gene_lists) = c("human_ptk", "mouse_ptk", "human_stk", "mouse_stk")
 
 human_list = unique(unlist(gene_lists[c("human_ptk", "human_stk")]))
 mouse_list = unique(unlist(gene_lists[c("mouse_ptk", "mouse_stk")]))
+
+specific_list = scan(here::here("input", "very_specific_genelist.txt"), what = character(), sep = "\n", quiet = TRUE)
 ```
 
 ## Map to Entrez ID
@@ -65,6 +74,20 @@ human_entrez = dplyr::left_join(data.frame(SYMBOL = human_list), org_hs_df, by =
 
 We need to filter the background down to the kinases and their targets first here, because I think we are enriched for signaling things, we are going to get signaling things in general.
 
+```{r kinases}
+kinase_files = dir(here::here("kea3_datasets"), full.names = TRUE)
+kinase_files = grep("Cheng.KSIN|PTMsigDB|PhosD.All|STRING.bind", kinase_files, value = TRUE)
+kinase_data = purrr::map(kinase_files, parse_gmt)
+kinase_genes = unique(unlist(kinase_data))
+kinase_entrez = dplyr::left_join(data.frame(SYMBOL = kinase_genes), org_hs_df, by = "SYMBOL") %>%
+  dplyr::filter(!is.na(ENTREZID)) %>%
+  dplyr::pull(ENTREZID)
+
+specific_entrez = dplyr::left_join(data.frame(SYMBOL = specific_list), org_hs_df, by = "SYMBOL") %>%
+  dplyr::filter(!is.na(ENTREZID)) %>%
+  dplyr::pull(ENTREZID)
+```
+
 ## GO Enrichment
 
 ```{r go_enrichment}
@@ -72,37 +95,46 @@ go_all = readRDS(here::here("go_all.rds"))
 go_bp = readRDS(here::here("go_bp.rds"))
 human_go_all = hypergeometric_feature_enrichment(
   new("hypergeom_features", significant = human_entrez,
-      universe = org_hs_df$ENTREZID,
+      universe = kinase_entrez,
       annotation =  go_all),
   p_adjust = "BH"
 )
 human_go_bp = hypergeometric_feature_enrichment(
   new("hypergeom_features", significant = human_entrez,
-      universe = org_hs_df$ENTREZID,
+      universe = kinase_entrez,
       annotation = go_bp),
   p_adjust = "BH"
 )
 
 mouse_go_all = hypergeometric_feature_enrichment(
   new("hypergeom_features", significant = mouse_entrez,
-      universe = org_hs_df$ENTREZID,
+      universe = kinase_entrez,
       annotation =  go_all),
   p_adjust = "BH"
 )
 mouse_go_bp = hypergeometric_feature_enrichment(
   new("hypergeom_features", significant = mouse_entrez,
-      universe = org_hs_df$ENTREZID,
+      universe = kinase_entrez,
       annotation = go_bp),
   p_adjust = "BH"
 )
 
-all_go = combine_enrichments(human_all = human_go_all,
-                             mouse_all = mouse_go_all)
-get_significant_annotations(all_go, padjust <= 0.001, counts >= 2)
+all_go = combine_enrichments(human = human_go_all,
+                             mouse = mouse_go_all)
 
-bp_go = combine_enrichments(human_bp = human_go_bp,
-                            mouse_bp = mouse_go_bp)
-get_significant_annotations(bp_go, padjust <= 0.001, counts >= 2)
+gocut = 0.001
+
+all_go_sig = get_significant_annotations(all_go, padjust <= gocut, counts >= 2)
+
+goall_table = extract_stats_table(all_go_sig, specific_entrez)
+
+
+bp_go = combine_enrichments(human = human_go_bp,
+                            mouse = mouse_go_bp)
+bp_sig = get_significant_annotations(bp_go, padjust <= gocut, counts >= 2)
+
+gobp_table = extract_stats_table(bp_sig, specific_entrez)
+dim(gobp_table)
 ```
 
 Nice!
@@ -117,245 +149,195 @@ all_kegg = unique(unlist(kegg_annotation@annotation_features))
 
 human_kegg = hypergeometric_feature_enrichment(
   new("hypergeom_features", significant = human_entrez,
-      universe = org_hs_df$ENTREZID,
+      universe = kinase_entrez,
       annotation = kegg_annotation),
   p_adjust = "BH"
 )
 
 mouse_kegg = hypergeometric_feature_enrichment(
   new("hypergeom_features", significant = mouse_entrez,
-      universe = org_hs_df$ENTREZID,
+      universe = kinase_entrez,
       annotation = kegg_annotation),
   p_adjust = "BH"
 )
 
 kegg_enrich = combine_enrichments(human = human_kegg,
                                   mouse = mouse_kegg)
-kegg_sig = get_significant_annotations(kegg_enrich, padjust <= 0.01, counts >= 2)
-kegg_table = kegg_sig@statistics@statistic_data %>%
-  dplyr::filter(human.padjust <= 0.01, mouse.padjust <= 0.01,
-                human.counts >= 2, mouse.counts >= 2)
-kegg_table$pathway = kegg_annotation@description[rownames(kegg_table)]
+kegg_sig = get_significant_annotations(kegg_enrich, padjust <= gocut, counts >= 2)
+
+kegg_table = extract_stats_table(kegg_sig, specific_entrez)
 ```
 
-### KEA3 Enriched Results
+Now with this table, we will filter down to things that include "signaling" in the description.
 
-Four lists of input genes were passed to KEA3.
-
-* PTK Human Fib vs Ctrl
-* PTK Mouse Fib vs Ctrl
-* STK Human Fib vs Ctrl
-* STK Mouse Fib vs Ctrl
-
-For each list of genes, they were queried on KEA3 using the [web API](https://maayanlab.cloud/kea3/templates/api.jsp), and results transformed from JSON to a list.
-The code for the API queries is in "kea3_runs.R" and should be run separately from generating this document.
-
-### Definitions
-
-* **Enriched**: this kinase was in the **top 10** of MeanRank'ed enrichment results from KEA3 (see background on KEA3 above).
-* **Overlapped**: this kinase / gene was in the input list of genes and the genes annotated to that kinase in KEA3.
-
-### Human Protein Atlas Data
-
-The consensus expression data from Human Protein Atlas was downloaded. 
-This data will be used to limit results to genes that are known to be expressed in Liver.
-
-## Methods
-
-### Enrichment
-
-For each gene list, we queried KEA3 using the publicly accessible API and stored results as simple lists in R.
-**Enriched** kinases are those in the **top 10** kinases by MeanRank score.
-For each of the enriched kinases, we also extracted the genes from the input list that overlap with the kinase annotation.
-
-### Network Generation
-
-From the KEA3 downloads page, various GMT files were downloaded.
-Using the downloaded datasets, we created weighted networks of kinase-substrate pairs and protein-protein interactions.
-The weight of the edge in the network between any two genes represents how many datasets that edge was observed in.
-Therefore, multiple sources of evidence for the pair of proteins to be interacting adds to the weight of the network edge.
-
-### Tissue Expression
-
-Tissue specific gene / protein expression was defined from the Human Protein Atlas (HPA) mRNA expression consensus data, which is defined as maximum observed expression in that tissue for HPA, GTEx, Fantom5.
-Expression values are first transformed using $log(expression + 1)$.
-The mode for all log(expression) > 1 across all tissues was determined, and a standard deviation (SD) from values greater than the mode calculated, using the mode as the mean for the SD calculation.
-A lower limit cutoff was calculated as:
-
-$$cutoff = mode - 2 * sd$$
-
-All genes with a log(expression) > than $cutoff$ in the tissue of interest are said to be expression in the tissue.
-
-## Results
-
-```{r load_kea3_data}
-kea3_results = readRDS(here::here("kea3_enrichment_2021-09-29", "kea3_results.rds"))
-hpa_consensus = read.table(here::here("hpa_data", "rna_consensus_2021-09-27.tsv"), header = TRUE, sep = "\t") %>%
-  dplyr::mutate(logX = log1p(NX))
-kea3_network = readRDS(here::here("kea3_datasets", "kea3_networks_2021-09-30.rds"))
+```{r filter_signaling, include = FALSE}
+kegg_signaling = kegg_table %>%
+  dplyr::filter(grepl("signaling", pathway, ignore.case = TRUE)) %>%
+  dplyr::arrange(desc(human.odds))
 ```
 
-First, we need to figure out what is expressed in the liver.
-We previously examined how to do this in another report.
-Initially, we will use what is expressed in liver, not necessarily what is "specific" to liver.
+And let's play with the VEGF signaling one, which is the top one.
 
-```{r find_limit}
-mode_sd_all = hpa_consensus %>%
-  dplyr::filter(logX > 1) %>%
-  dplyr::pull(logX) %>%
-  calculate_mode_sd()
+```{r vegf_signaling, include = FALSE}
+vegf = keggGet(kegg_signaling$path_id[1], "kgml")
+vegf_df = parseKGML2DataFrame(vegf)
+vegf_df = vegf_df %>%
+  dplyr::mutate(from = gsub("hsa:", "", from),
+                to = gsub("hsa:", "", to))
 
-min_val = mode_sd_all["mode"] - 2 * mode_sd_all["sd"]
-liver_expressed = hpa_consensus %>%
-  dplyr::filter(Tissue %in% "liver", logX >= min_val) %>%
-  dplyr::pull(Gene.name)
-min_val
+vegf_graph = tidygraph::as_tbl_graph(vegf_df)
+vegf_graph = vegf_graph %>%
+  activate(nodes) %>%
+  mutate(mouse = name %in% mouse_entrez,
+         human = name %in% human_entrez) %>%
+  dplyr::left_join(., org_hs_df, by = c("name" = "ENTREZID"))
+
+ggraph(vegf_graph, "graphopt") +
+  geom_node_label(aes(label = SYMBOL, fill = human)) +
+  geom_edge_link(aes(color = subtype))
 ```
 
-Using this cutoff, we have `r length(liver_expressed)` genes with robust expression in the liver.
-This number may be too large, and we may need to filter to what is *specific* to liver instead.
+```{r alcoholic_disease, include = FALSE}
+nash_kgml = kegg_table %>%
+  dplyr::filter(grepl("alcohol", pathway)) %>%
+  dplyr::pull(path_id) %>%
+  keggGet("kgml")
+nash_df = parseKGML2DataFrame(nash_kgml) %>%
+  dplyr::mutate(from = gsub("hsa:", "", from),
+                to = gsub("hsa:", "", to))
+nash_graph = tidygraph::as_tbl_graph(nash_df)
+nash_graph = nash_graph %>%
+  activate(nodes) %>%
+  mutate(mouse = name %in% mouse_entrez,
+         human = name %in% human_entrez) %>%
+  dplyr::left_join(., org_hs_df, by = c("name" = "ENTREZID"))
 
-Second, lets look at the KEA3 results and the networks, filtered by what is expressed in liver.
-In this one, we will use the **top ten** enriched kinases (see definitions above) using *MeanRank*, as well as their overlapping genes.
-
-```{r kea3_results}
-# changing names to make them easier to filter to.
-names(kea3_results) = c("PTK_Human", "PTK_Mouse", "STK_Human", "STK_Mouse")
-
-human_results = create_enriched_network(kea3_results[c("PTK_Human", "STK_Human")], n_gene = 10, kea3_network, liver_expressed)
+ggraph(nash_graph, "graphopt") +
+  geom_node_label(aes(label = SYMBOL, fill = human)) +
+  geom_edge_link(aes(color = subtype))
 ```
 
-```{r mouse_results}
-mouse_results = create_enriched_network(kea3_results[c("PTK_Mouse", "STK_Mouse")], n_gene = 10, kea3_network, liver_expressed)
+## Reactome
+
+So, one issue with the KEGG pathways, is they don't seem to contain an annotation for one particular gene of interest, DDR1.
+In contrast, reactome seems to have it.
+
+```{r reactome_annotation}
+reactome_annotation = readRDS(here::here("reactome_annotation.rds"))
+reactome_path_ddr1 = "R-HSA-1474244"
 ```
 
-```{r full_results}
-all_results = create_enriched_network(kea3_results, n_gene = 10, kea3_network, liver_expressed)
+```{r reactome_enrichment}
+human_reactome = hypergeometric_feature_enrichment(
+  new("hypergeom_features", significant = human_entrez,
+      universe = kinase_entrez,
+      annotation = reactome_annotation),
+  p_adjust = "BH"
+)
 
-all_results_source = annotate_full_network(all_results$network, human_results$network, mouse_results$network, "human", "mouse")
+mouse_reactome = hypergeometric_feature_enrichment(
+  new("hypergeom_features", significant = mouse_entrez,
+      universe = kinase_entrez,
+      annotation = reactome_annotation),
+  p_adjust = "BH"
+)
+reactome_cut = 0.005
+reactome_enrich = combine_enrichments(human = human_reactome,
+                                  mouse = mouse_reactome)
+reactome_sig = get_significant_annotations(reactome_enrich, padjust <= reactome_cut, counts >= 2)
+reactome_table = extract_stats_table(reactome_sig, specific_entrez)
 ```
 
-What we've done is pull the genes from all the enrichment results, and create a single network from all of those, and then we can lay out the comparison networks based on that, with the edges and nodes that are in the specific networks grayed out or see through.
-Hopefully.
 
-Here is the full network with all results from both organisms.
+As I've looked at these results, I've noticed some interesting themes, namely processes and pathways that involve a large amount of extracellular matrix reorganization / adhesion, and various signaling pathways.
 
-```{r full_graph}
-set.seed(123)
-ggraph(all_results_source, layout = "graphopt") +
-  geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
-                 end_cap = circle(3, 'mm'),
-                 alpha = 0.5) +
-  geom_node_label(aes(label = name)) +
-  labs(subtitle = "KEA3 Results, Kinase-Targets") 
+The various signaling pathways make sense, because we are looking at the targets of kinase signaling.
+
+The extracellular matrix stuff is interesting, because fibrosis necessarily involves a good amount of extracellular matrix and cellular adhesion processes / pathways.
+
+We will put those into a separate table in the Excel file.
+
+```{r show_matrix_adhesion}
+reactome_table$source = "reactome"
+gobp_table$source = "GO.BP"
+kegg_table$source = "KEGG"
+
+all_results = rbind(gobp_table,
+                    kegg_table,
+                    reactome_table)
+interesting_table = all_results %>%
+  dplyr::filter(grepl("matrix|adhes.*|signaling", pathway, ignore.case = TRUE))
+dim(interesting_table)
 ```
 
-### Add LFC
+```{r export_tables, eval = FALSE}
+kegg_table = add_genes(kegg_table, kegg_sig, org_hs_df)
+gobp_table = add_genes(gobp_table, bp_sig, org_hs_df)
+reactome_table = add_genes(reactome_table, reactome_sig, org_hs_df)
 
-```{r add_log_fc}
-all_lfc = get_kinase_lfc()
-
-# min_mouse = 0.97
-# min_human = 0.57
-# 
-# all_nodes = all_results_source %>%
-#   activate(nodes) %>%
-#   data.frame() %>%
-#   select(name)
-# all_lfc = left_join(all_nodes, all_lfc, by = "name")
-# na_mouse = is.na(all_lfc$LFC.Mouse)
-# all_lfc[na_mouse, "LFC.Mouse"] = min_mouse
-# na_human = is.na(all_lfc$LFC.Human)
-# all_lfc[na_human, "LFC.Human"] = min_human
-
-all_results_source = left_join(all_results_source, all_lfc, by = "name")
+export_pathway_tables(list(KEGG = kegg_table,
+                           REACTOME = reactome_table,
+                           GOBP = gobp_table,
+                           ADHESION = interesting_table),
+                      pathway_file = "pathway_tables.xlsx")
 ```
 
-Now we want to subset to emphasize the human, with the type of node indicated as well.
+Finally, we can use Kendall-tau correlation to ask how similar the p-values are within each table between mouse and human.
+The list includes anything that was **significant** (below the p-value cutoff) for either mouse or human.
 
-```{r human_network}
-human_subset = subset_network_alpha(all_results_source, human_results, c("both", "human"))
+```{r ici_kt_tables, fig.width = 3, fig.height=9}
+split_source = split(all_results, all_results$source)
+ici_source = purrr::map_df(split_source, function(.x){
+  ici_res = ici_kt(.x$mouse.padjust, .x$human.padjust, "global")
+  text_res = paste0("ICI-Kt: ", format(ici_res["tau"], digits = 2), "\n",
+                    " P-Value: ", format(ici_res["pvalue"], digits = 2))
+  data.frame(source = .x$source[1],
+             tau = ici_res["tau"],
+             pvalue = ici_res["pvalue"],
+             text = text_res)
+})
 
-set.seed(123)
-human_network = ggraph(human_subset, layout = "graphopt") +
-  geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
-                 end_cap = circle(3, 'mm'),
-                 aes(alpha = alpha),
-                 show.legend = FALSE) +
-  geom_node_label(aes(label = name, alpha = alpha,
-                      fill = TypeSource,
-                      size = LFC.Human),
-                  label.size = NA) +
-  labs(subtitle = "Human KEA3 Network") +
-  guides(alpha = "none", size = "none") + 
-  scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
-  theme(legend.position = c(0.02, 0.92))
-human_network
+ici_values = all_results %>%
+  dplyr::group_by(source) %>%
+  dplyr::summarise(ici_kt = ici_kt(human.padjust, mouse.padjust, "global")[1])
+
+knitr::kable(ici_values, digits = 2)
+
+sig_cuts = data.frame(cut = c(gocut, gocut, reactome_cut),
+                      source = c("GO.BP",
+                                 "KEGG",
+                                 "reactome"))
+ici_source$x = 13
+ici_source$y = 30
+
+sig_plots = ggplot(all_results, aes(x = -1 * log10(human.padjust), y = -1 * log10(mouse.padjust))) + geom_point(alpha = 0.5) +
+  geom_hline(aes(yintercept = -1 * log10(cut)), data = sig_cuts, color = "red") +
+  geom_vline(aes(xintercept = -1 * log10(cut)), data = sig_cuts, color = "red") +
+  geom_abline(slope = 1, color = "blue") +
+  geom_text(data = ici_source, aes(x = x, y = y, label = text)) +
+  facet_wrap(~ source, ncol = 1) +
+  coord_equal() +
+  labs(x = "Human Adjusted-PValues",
+       y = "Mouse Adjusted-PValues")
+sig_plots
 ```
 
-```{r common_network}
-common_subset = subset_network_alpha(all_results_source, human_results, c("both"))
-
-set.seed(123)
-common_network = ggraph(common_subset, layout = "graphopt") +
-  geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
-                 end_cap = circle(3, 'mm'),
-                 aes(alpha = alpha),
-                 show.legend = FALSE) +
-  geom_node_label(aes(label = name, alpha = alpha,
-                      fill = TypeSource),
-                  label.size = NA) +
-  labs(subtitle = "Common KEA3 Network") +
-  guides(alpha = "none") + 
-  scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
-  theme(legend.position = c(0.02, 0.92))
-common_network
-```
-
-```{r mouse_network}
-mouse_subset = subset_network_alpha(all_results_source, mouse_results,
-                                    c("both", "mouse"))
-set.seed(123)
-mouse_network = ggraph(mouse_subset, layout = "graphopt") +
-  geom_edge_link(arrow = arrow(length = unit(4, 'mm')),
-                 end_cap = circle(3, 'mm'),
-                 aes(alpha = alpha),
-                 show.legend = FALSE) +
-  geom_node_label(aes(label = name, alpha = alpha,
-                      fill = TypeSource,
-                      size = LFC.Mouse),
-                  label.size = NA) +
-  labs(subtitle = "Mouse KEA3 Network") +
-  guides(alpha = "none", size = "none") + 
-  scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
-  theme(legend.position = c(0.02, 0.92))
-mouse_network
-```
-
-* kinase.E: A kinase gene, and enriched from KEA3
-* kinase.O: A kinase gene, and overlapping in the input gene list
-* other: A gene that was in the input list, and was a *target* of the kinase in the KEA3 data.
-
-These networks are based on the KEA3 enrichment results, and the differential results.
-
-This is **starting** to look interpretable, I think.
-We can see the enriched kinases, any overlapping kinases that come up from the enrichment overlapping genes, and then the overlapping genes.
-I'm not sure what else should be here, so I'm going to stop.
-
-### Export Plots
-
-```{r export_plots}
-plot_list = list(human = human_network,
-                 common = common_network,
-                 mouse = mouse_network)
-export_plots(plot_list, "network_plots.pptx")
-```
+Log10 Adjusted-PValues with P-Value cutoffs indicated by red lines and perfect agreement by blue lines.
+Points in a specific quadrant indicate pathways significant in only that organism.
 
 ## Executive Summary
 
-* Used the differential **human** peptide lists as input to KEA3 enrichment.
-* Used the KEA3 kinase-substrate lists to build a gene network.
-* Used the HPA consensus data to limit things to what is expressed in Liver.
-* Visualized the kinase-substrate network based on the enriched kinases and the differential genes / substrates (see above), with the log-fold-changes applied.
-
-Finally, after reading the KEA3 manuscript, we are not sure about whether the method they use for combining across datasets is appropriate, and their emphasis on selecting only the **top XXX** results.
+* Data:
+  * Gene Ontology biological process (GO.BP), KEGG pathways, and Reactome pathways.
+  * Significant kinase targets from UKA (significant genes) for both Mouse and Human.
+We merged STK and PTK results together.
+  * Kinases and their targets from KEA3 (background genes).
+* Process:
+  * Map symbols to Entrez IDs using org.Hs.eg.db.
+  * Hypergeometric enrichment using categoryCompare2.
+  * Significant enrichment are those with at least 2 genes annotated, and then adjusted p-values <=
+    * GO.BP: `r gocut`
+    * KEGG: `r gocut`
+    * reactome: `r reactome_cut`
+* Results:
+  * 
