@@ -340,4 +340,12 @@ We merged STK and PTK results together.
     * KEGG: `r gocut`
     * reactome: `r reactome_cut`
 * Results:
-  * 
+  * See **pathway_tables_XXX.xlsx** for the enriched pathways.
+  * Signaling, in all three sources.
+This isn't that surprising given we have the kinases.
+I had hoped modifying the background would suppress these enrichments a bit, but no luck.
+  * KEGG, returned the pathway "Non-alcoholic fatty liver disease" as significant in both mouse and human, which is one pathway that leads to liver fibrosis.
+  * Also the pathways "Axon guidance", "Osteoclast differentiation", "Focal adhesion" and "Adherens junction" all involve extracellular matrix regulation.
+  * Similar story in Reactome.
+  * GO.BP also has things related to extracellular matrix and adhesion.
+  * We compared the adjusted p-value results of enrichment between human and mouse using Kendall correlation and plotted them against each other.
