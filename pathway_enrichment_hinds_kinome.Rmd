@@ -16,7 +16,9 @@ There is an [Executive Summary](#executive-summary) at the end of this report.
 ## Purpose
 
 To investigate pathway enrichment for Hinds kinome manuscript.
-We will use both Gene Ontology Biological Process as it is more comprehensive, and KEGG Pathways (see get_kegg_data.R for how we got the pathway annotations), and Reactome.
+Pathway sources include Gene Ontology biological process, KEGG, and Reactome.
+The primary result here is the **comparison** between Human and Mouse enrichments.
+Further investigation probably requires a discussion.
 
 ## Data
 
@@ -29,7 +31,7 @@ The foreground set is the differential things spit out by UKA.
 Hypergeometric enrichment using categoryCompare2. 
 Kegg pathway annotations were pulled using the Bioconductor KEGGREST package on 2021-10-27.
 
-## Data
+## Get Data
 
 ```{r setup}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
@@ -137,9 +139,6 @@ gobp_table = extract_stats_table(bp_sig, specific_entrez)
 dim(gobp_table)
 ```
 
-Nice!
-If we don't find anything via KEGG, we have something to fall back on.
-
 ## KEGG
 
 ```{r kegg_enrichment}
@@ -166,55 +165,6 @@ kegg_enrich = combine_enrichments(human = human_kegg,
 kegg_sig = get_significant_annotations(kegg_enrich, padjust <= gocut, counts >= 2)
 
 kegg_table = extract_stats_table(kegg_sig, specific_entrez)
-```
-
-Now with this table, we will filter down to things that include "signaling" in the description.
-
-```{r filter_signaling, include = FALSE}
-kegg_signaling = kegg_table %>%
-  dplyr::filter(grepl("signaling", pathway, ignore.case = TRUE)) %>%
-  dplyr::arrange(desc(human.odds))
-```
-
-And let's play with the VEGF signaling one, which is the top one.
-
-```{r vegf_signaling, include = FALSE}
-vegf = keggGet(kegg_signaling$path_id[1], "kgml")
-vegf_df = parseKGML2DataFrame(vegf)
-vegf_df = vegf_df %>%
-  dplyr::mutate(from = gsub("hsa:", "", from),
-                to = gsub("hsa:", "", to))
-
-vegf_graph = tidygraph::as_tbl_graph(vegf_df)
-vegf_graph = vegf_graph %>%
-  activate(nodes) %>%
-  mutate(mouse = name %in% mouse_entrez,
-         human = name %in% human_entrez) %>%
-  dplyr::left_join(., org_hs_df, by = c("name" = "ENTREZID"))
-
-ggraph(vegf_graph, "graphopt") +
-  geom_node_label(aes(label = SYMBOL, fill = human)) +
-  geom_edge_link(aes(color = subtype))
-```
-
-```{r alcoholic_disease, include = FALSE}
-nash_kgml = kegg_table %>%
-  dplyr::filter(grepl("alcohol", pathway)) %>%
-  dplyr::pull(path_id) %>%
-  keggGet("kgml")
-nash_df = parseKGML2DataFrame(nash_kgml) %>%
-  dplyr::mutate(from = gsub("hsa:", "", from),
-                to = gsub("hsa:", "", to))
-nash_graph = tidygraph::as_tbl_graph(nash_df)
-nash_graph = nash_graph %>%
-  activate(nodes) %>%
-  mutate(mouse = name %in% mouse_entrez,
-         human = name %in% human_entrez) %>%
-  dplyr::left_join(., org_hs_df, by = c("name" = "ENTREZID"))
-
-ggraph(nash_graph, "graphopt") +
-  geom_node_label(aes(label = SYMBOL, fill = human)) +
-  geom_edge_link(aes(color = subtype))
 ```
 
 ## Reactome
