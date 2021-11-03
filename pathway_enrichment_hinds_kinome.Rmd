@@ -216,14 +216,20 @@ all_results = rbind(gobp_table,
                     kegg_table,
                     reactome_table)
 interesting_table = all_results %>%
-  dplyr::filter(grepl("matrix|adhes.*|signaling", pathway, ignore.case = TRUE))
+  dplyr::filter(grepl("matrix|adhes.*", pathway, ignore.case = TRUE)) %>%
+  dplyr::arrange(human.padjust)
 dim(interesting_table)
 ```
 
-```{r export_tables, eval = FALSE}
-kegg_table = add_genes(kegg_table, kegg_sig, org_hs_df)
-gobp_table = add_genes(gobp_table, bp_sig, org_hs_df)
-reactome_table = add_genes(reactome_table, reactome_sig, org_hs_df)
+## Comparisons
+
+```{r export_tables}
+kegg_table = add_genes(kegg_table, kegg_sig, org_hs_df) %>%
+  dplyr::arrange(human.padjust)
+gobp_table = add_genes(gobp_table, bp_sig, org_hs_df) %>%
+  dplyr::arrange(human.padjust)
+reactome_table = add_genes(reactome_table, reactome_sig, org_hs_df) %>%
+  dplyr::arrange(human.padjust)
 
 export_pathway_tables(list(KEGG = kegg_table,
                            REACTOME = reactome_table,
@@ -291,6 +297,7 @@ We merged STK and PTK results together.
     * reactome: `r reactome_cut`
 * Results:
   * See **pathway_tables_XXX.xlsx** for the enriched pathways.
+Each pathway database is a separate worksheet, as well as those pathways related to extracellular matrix or adhesion.
   * Signaling, in all three sources.
 This isn't that surprising given we have the kinases.
 I had hoped modifying the background would suppress these enrichments a bit, but no luck.
@@ -299,3 +306,18 @@ I had hoped modifying the background would suppress these enrichments a bit, but
   * Similar story in Reactome.
   * GO.BP also has things related to extracellular matrix and adhesion.
   * We compared the adjusted p-value results of enrichment between human and mouse using Kendall correlation and plotted them against each other.
+The results show that both organisms pathway enrichment are rather similar, with just a few things coming up in either organism.
+
+### Table Columns
+
+* path_id: the database identifier.
+* human.p: raw enrichment p-value for human.
+* human.odds: odds ratio that is roughly observed / expected.
+* human.expected: number of expected genes annotated to pathway.
+* human.counts: actual number of genes annotated to pathway.
+* human.padjust: Benjamini-Hochberg adjusted p-value.
+* mouse....: same as above just for mouse.
+* pathway: the title of the pathway.
+* n_specific: number of genes in that pathway that are present in the very specific gene list previously sent by Justin.
+* source: the pathway source.
+* genes: which genes from the UKA enriched gene list are annotated to the pathway.
