@@ -9,6 +9,7 @@ output:
     df_print: paged
 editor_options: 
   chunk_output_type: console
+bibliography: '`r here::here("rmflight_reports", "Hinds_Kinome_references.json")`'
 ---
 
 There is an [Executive Summary](#executive-summary) at the end of this report.
@@ -35,12 +36,13 @@ The cycles and exposure times are treated as independent measures for each pepti
 We imported nearly raw data provided from the PamGene instrument that includes cycle and exposure time for each peptide on each array and chip.
 Inspection of the log-intensities determined that values less than 30 are likely to be unreliable.
 Before correlation analysis, values less than 30 were replaced with zero.
-Sample-sample correlations were calculated using information-content-informed Kendall-tau (ICI-Kt, package version 1.5, Flight, R.M.; Moseley, H.N.B. ICIKendallTau. Available online: https://github.com/MoseleyBioinformaticsLab/ICIKendallTau.), treating zero as missing values.
+Sample-sample correlations were calculated using information-content-informed Kendall-tau [@flightrobertmICIKendallTau2021], treating zero as missing values.
 Only features that had a non-missing value (> 0) in at least one of the samples were included.
-Clustering of samples used 1 - ICI-Kt as the distance, and then the dendrogram was sorted using dendsort with min type sorting (Sakai, R.; Winand, R.; Verbeiren, T.; Moere, A.V.; Aerts, J. dendsort: modular leaf ordering methods for dendrogram representations in R. F1000Research 2014, 3.).
+Clustering of samples used 1 - ICI-Kt as the distance, and then the dendrogram was sorted using dendsort with min type sorting [@sakaiDendsortModularLeaf2014].
 Means, absolute differences between largest and smallest, standard deviations (SD) and relative standard deviations (RSD) were calculated among the three technical replicates for each pooled sample.
 The RSD mode was calculated using the replicates where the average mean was greater than or equal to 30.
-All calculations were performed using R version 4.1.0 (Ihaka, R.; Gentleman, R. R: a language for data analysis and graphics. Journal of computational and graphical statistics 1996, 5, 299-314.)
+All calculations were performed using R version 4.1.0 [@rcoreteamLanguageEnvironmentStatistical2021].
+Heatmaps were generated using the ComplexHeatmap package version 2.10.0 [@guComplexHeatmapsReveal2016].
 
 
 ```{r setup}
@@ -53,8 +55,8 @@ library(ggraph)
 library(flextable)
 theme_set(cowplot::theme_cowplot())
 knitr::opts_chunk$set(fig.width = 8, fig.height = 8)
-source(here::here("kea3_functions.R"))
-save_loc = here::here("kea3_enrichment_2021-09-29")
+source(here::here("rmflight_reports/kea3_functions.R"))
+save_loc = here::here("rmflight_reports/kea3_enrichment_2021-09-29")
 ```
 
 ```{r raw_data, warning=FALSE}
@@ -284,7 +286,7 @@ group_cor_df = as.data.frame(group_cor) %>%
   
 plot_list = list(correlation = sample_sample_heatmap,
                  table = group_cor_df)
-export_plots(plot_list, "correlation_plots_2021-10-27.pptx")
+export_plots(plot_list, "rmflight_reports/correlation_plots_2021-10-27.pptx")
 ```
 
 ## Executive Summary
@@ -313,3 +315,5 @@ Feature values < 30 were treated as missing.
 ### Table Caption
 
 Median ICI-Kt correlations among samples within a type (diagonal) and between types (off diagonal).
+
+## References

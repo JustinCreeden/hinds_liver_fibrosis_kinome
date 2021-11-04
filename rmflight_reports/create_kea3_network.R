@@ -1,0 +1,7 @@
+library(tidygraph)
+library(dplyr)
+library(ggraph)
+source(here::here("kea3_functions.R"))
+kea3_networks = create_kea3_networks()
+saveRDS(kea3_networks, file = here::here("kea3_datasets", "kea3_networks_2021-09-30.rds"))
+rm(kea3_networks)

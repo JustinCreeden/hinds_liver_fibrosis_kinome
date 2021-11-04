@@ -363,9 +363,22 @@ subset_network_alpha = function(full_network, subset_results, keep_network = c("
 export_plots = function(plot_list, ppt_file){
   new_ppt = officer::read_pptx()
   for (iplot in plot_list) {
-    p_dml = rvg::dml(ggobj = iplot)
     new_ppt = officer::add_slide(new_ppt, layout = "Blank")
-    new_ppt = officer::ph_with(new_ppt, value = p_dml, location = officer::ph_location(width = 8, height = 8))
+    if (inherits(iplot, "ggplot")) {
+      p_dml = rvg::dml(ggobj = iplot)
+      
+      new_ppt = officer::ph_with(new_ppt, value = p_dml, location = officer::ph_location(width = 8, height = 8))
+      
+    } else if (inherits(iplot, "Heatmap")) {
+      
+      p_dml = rvg::dml(code = draw(iplot, merge_legend = TRUE))
+      
+      new_ppt = officer::ph_with(new_ppt, value = p_dml, location = officer::ph_location(width = 8, height = 8))
+    
+    } else if (inherits(iplot, "flextable")) {
+      new_ppt = officer::ph_with(new_ppt, value = iplot, location = officer::ph_location_left())
+    }
+    
   }
   print(new_ppt, target = here::here(ppt_file))
 }
@@ -501,4 +514,100 @@ transform_raw_data = function(raw_data){
   raw_long_values = raw_long_values %>%
     dplyr::mutate(measure_id = paste0(peptide, ".", exposure, ".", cycle), sample_name2 = paste0(comment, "_", replicate))
   list(data = raw_long_values, sample_info = raw_info)
+}
+
+create_go_annotation = function(db, ontology = NULL){
+  all_genes = keys(db)
+  go_all_gene = select(db, keys = all_genes, columns = c("GOALL", "ONTOLOGYALL"))
+  
+  if (!is.null(ontology)) {
+    go_all_gene = go_all_gene[go_all_gene$ONTOLOGYALL == ontology, ]
+    ontology_type = paste0("GO.", ontology)
+  } else {
+    ontology_type = "GO.all"
+  }
+  go_2_gene = split(go_all_gene$ENTREZID, go_all_gene$GOALL)
+  go_2_gene = lapply(go_2_gene, unique)
+  go_desc = select(GO.db::GO.db, keys = names(go_2_gene), columns = "TERM", keytype = "GOID")$TERM
+  names(go_desc) = names(go_2_gene)
+
+  go_annotation = categoryCompare2::annotation(annotation_features = go_2_gene,
+                                               description = go_desc,
+                                               annotation_type = ontology_type,
+                                               feature_type = "ENTREZID")
+  go_annotation
+}
+
+
+create_kegg_annotation = function(kegg_data){
+  kegg_data$description = gsub(" - Homo sapiens (human)", "", kegg_data$description, fixed = TRUE)
+  
+  kegg_annotation = categoryCompare2::annotation(
+    annotation_features = kegg_data$annotation,
+    description = kegg_data$description[names(kegg_data$annotation)],
+    annotation_type = "kegg",
+    feature_type = "ENTREZID"
+  )
+  kegg_annotation
+}
+
+
+extract_stats_table = function(in_results, specific_entrez){
+  sig_res = in_results@statistics@significant@significant
+  which_sig = apply(sig_res, 1, function(.x){
+    sum(.x > 0)
+  }) > 0
+  stat_table = in_results@statistics@statistic_data[which_sig, ]
+  stat_table = stat_table %>%
+    tibble::rownames_to_column("path_id") %>%
+    mutate(pathway = in_results@annotation@description[path_id])
+  stat_table = add_specific_count(stat_table,
+                                  in_results@annotation,
+                                  specific_entrez)
+  stat_table$n_annotated = in_results@annotation@counts[stat_table$path_id]
+  stat_table
+}
+
+add_specific_count = function(results_table, annotation_obj, specific_entrez){
+  n_spec = purrr::imap_dfr(annotation_obj@annotation_features,
+                          function(.x, .y){
+    data.frame(path_id = .y, n_specific = sum(specific_entrez %in% .x))
+                          })
+  results_table = dplyr::left_join(results_table, n_spec, by = "path_id")
+  results_table
+}
+
+add_genes = function(results_table, sig_obj, gene_df){
+  use_ids = results_table$path_id
+  all_features = union(sig_obj@enriched[[1]]@features, sig_obj@enriched[[2]]@features)
+  annot_obj = sig_obj@annotation@annotation_features
+  annotation_genes = purrr::map_chr(use_ids, function(in_id){
+    tmp_features = intersect(all_features, annot_obj[[in_id]])
+    gene_df %>%
+      dplyr::filter(ENTREZID %in% tmp_features) %>%
+      dplyr::pull(SYMBOL) %>%
+      sort() %>%
+      paste(., collapse = ":")
+  })
+  results_table$genes = annotation_genes
+  results_table
+}
+
+export_pathway_tables = function(table_list, pathway_file){
+  openxlsx::write.xlsx(table_list, file = pathway_file, overwrite = TRUE)
+}
+
+score_annotation_overlap = function(annot_list){
+  overlap_matrix = matrix(0, nrow = length(annot_list), ncol = length(annot_list))
+  colnames(overlap_matrix) = rownames(overlap_matrix) = names(annot_list)
+  
+  for (i in seq(1, length(annot_list))) {
+    for (j in seq(i, length(annot_list))) {
+      overlap_matrix[i, j] = categoryCompare2::combined_coefficient(annot_list[[i]], annot_list[[j]])
+    }
+  }
+  dist_overlap = as.dist(1 - overlap_matrix)
+  annot_hclust = as.dendrogram(hclust(dist_overlap))
+  #order_annot = dendsort::dendsort(annot_hclust, type = "average")
+  annot_hclust
 }

@@ -1,0 +1,1700 @@
+[
+	{
+		"id": "flightrobertmICIKendallTau2021",
+		"type": "book",
+		"abstract": "Information-Content-Informed Kendall-tau in R",
+		"genre": "C++",
+		"note": "original-date: 2021-05-21T00:36:08Z",
+		"source": "GitHub",
+		"title": "ICIKendallTau",
+		"URL": "https://github.com/MoseleyBioinformaticsLab/ICIKendallTau",
+		"version": "0.1.8",
+		"author": [
+			{
+				"literal": "Flight, Robert M"
+			},
+			{
+				"literal": "Moseley, Hunter NB"
+			}
+		],
+		"accessed": {
+			"date-parts": [
+				[
+					"2021",
+					11,
+					3
+				]
+			]
+		},
+		"issued": {
+			"date-parts": [
+				[
+					"2021",
+					10,
+					28
+				]
+			]
+		}
+	},
+	{
+		"id": "flightCategoryCompare22021",
+		"type": "book",
+		"abstract": "Enables Gene Ontology (and other feature annotation) enrichment calculations and comparisons between feature sets.",
+		"genre": "R",
+		"note": "original-date: 2015-05-28T13:33:50Z",
+		"source": "GitHub",
+		"title": "categoryCompare2",
+		"URL": "https://github.com/rmflight/categoryCompare2",
+		"version": "0.99.158",
+		"author": [
+			{
+				"family": "Flight",
+				"given": "Robert M."
+			}
+		],
+		"accessed": {
+			"date-parts": [
+				[
+					"2021",
+					11,
+					3
+				]
+			]
+		},
+		"issued": {
+			"date-parts": [
+				[
+					"2021",
+					4,
+					14
+				]
+			]
+		}
+	},
+	{
+		"id": "kuleshovKEA3ImprovedKinase2021",
+		"type": "article-journal",
+		"abstract": "Phosphoproteomics and proteomics experiments capture a global snapshot of the cellular signaling network, but these methods do not directly measure kinase state. Kinase Enrichment Analysis 3 (KEA3) is a webserver application that infers overrepresentation of upstream kinases whose putative substrates are in a user-inputted list of proteins. KEA3 can be applied to analyze data from phosphoproteomics and proteomics studies to predict the upstream kinases responsible for observed differential phosphorylations. The KEA3 background database contains measured and predicted kinase-substrate interactions (KSI), kinase-protein interactions (KPI), and interactions supported by co-expression and co-occurrence data. To benchmark the performance of KEA3, we examined whether KEA3 can predict the perturbed kinase from single-kinase perturbation followed by gene expression experiments, and phosphoproteomics data collected from kinase-targeting small molecules. We show that integrating KSIs and KPIs across data sources to produce a composite ranking improves the recovery of the expected kinase. The KEA3 webserver is available at https://maayanlab.cloud/kea3.",
+		"container-title": "Nucleic Acids Research",
+		"DOI": "10.1093/nar/gkab359",
+		"ISSN": "0305-1048",
+		"issue": "W1",
+		"journalAbbreviation": "Nucleic Acids Research",
+		"page": "W304-W316",
+		"source": "Silverchair",
+		"title": "KEA3: improved kinase enrichment analysis via data integration",
+		"title-short": "KEA3",
+		"URL": "https://doi.org/10.1093/nar/gkab359",
+		"volume": "49",
+		"author": [
+			{
+				"family": "Kuleshov",
+				"given": "Maxim V"
+			},
+			{
+				"family": "Xie",
+				"given": "Zhuorui"
+			},
+			{
+				"family": "London",
+				"given": "Alexandra B K"
+			},
+			{
+				"family": "Yang",
+				"given": "Janice"
+			},
+			{
+				"family": "Evangelista",
+				"given": "John Erol"
+			},
+			{
+				"family": "Lachmann",
+				"given": "Alexander"
+			},
+			{
+				"family": "Shu",
+				"given": "Ingrid"
+			},
+			{
+				"family": "Torre",
+				"given": "Denis"
+			},
+			{
+				"family": "Ma’ayan",
+				"given": "Avi"
+			}
+		],
+		"accessed": {
+			"date-parts": [
+				[
+					"2021",
+					11,
+					3
+				]
+			]
+		},
+		"issued": {
+			"date-parts": [
+				[
+					"2021",
+					7,
+					2
+				]
+			]
+		}
+	},
+	{
+		"id": "benjaminiControllingFalseDiscovery1995",
+		"type": "article-journal",
+		"abstract": "The common approach to the multiplicity problem calls for controlling the familywise error rate (FWER). This approach, though, has faults, and we point out a few. A different approach to problems of multiple significance testing is presented. It calls for controlling the expected proportion of falsely rejected hypotheses-the false discovery rate. This error rate is equivalent to the FWER when all hypotheses are true but is smaller otherwise. Therefore, in problems where the control of the false discovery rate rather than that of the FWER is desired, there is potential for a gain in power. A simple sequential Bonferroni-type procedure is proved to control the false discovery rate for independent test statistics, and a simulation study shows that the gain in power is substantial. The use of the new procedure and the appropriateness of the criterion are illustrated with examples.",
+		"container-title": "Journal of the Royal Statistical Society. Series B (Methodological)",
+		"ISSN": "0035-9246",
+		"issue": "1",
+		"note": "publisher: [Royal Statistical Society, Wiley]",
+		"page": "289-300",
+		"source": "JSTOR",
+		"title": "Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing",
+		"title-short": "Controlling the False Discovery Rate",
+		"URL": "https://www.jstor.org/stable/2346101",
+		"volume": "57",
+		"author": [
+			{
+				"family": "Benjamini",
+				"given": "Yoav"
+			},
+			{
+				"family": "Hochberg",
+				"given": "Yosef"
+			}
+		],
+		"accessed": {
+			"date-parts": [
+				[
+					"2021",
+					11,
+					3
+				]
+			]
+		},
+		"issued": {
+			"date-parts": [
+				[
+					"1995"
+				]
+			]
+		}
+	},
+	{
+		"id": "flightCategoryCompareAnalyticalTool2014",
+		"type": "article-journal",
+		"abstract": "Assessment of high-throughput-omics data initially focuses on relative or raw levels of a particular feature, such as an expression value for a transcript, protein, or metabolite. At a second level, analyses of annotations including known or predicted functions and associations of each individual feature, attempt to distill biological context. Most currently available comparative- and meta-analyses methods are dependent on the availability of identical features across data sets, and concentrate on determining features that are differentially expressed across experiments, some of which may be considered \"biomarkers.\" The heterogeneity of measurement platforms and inherent variability of biological systems confounds the search for robust biomarkers indicative of a particular condition. In many instances, however, multiple data sets show involvement of common biological processes or signaling pathways, even though individual features are not commonly measured or differentially expressed between them. We developed a methodology, categoryCompare, for cross-platform and cross-sample comparison of high-throughput data at the annotation level. We assessed the utility of the approach using hypothetical data, as well as determining similarities and differences in the set of processes in two instances: (1) denervated skin vs. denervated muscle, and (2) colon from Crohn's disease vs. colon from ulcerative colitis (UC). The hypothetical data showed that in many cases comparing annotations gave superior results to comparing only at the gene level. Improved analytical results depended as well on the number of genes included in the annotation term, the amount of noise in relation to the number of genes expressing in unenriched annotation categories, and the specific method in which samples are combined. In the skin vs. muscle denervation comparison, the tissues demonstrated markedly different responses. The Crohn's vs. UC comparison showed gross similarities in inflammatory response in the two diseases, with particular processes specific to each disease.",
+		"container-title": "Frontiers in Genetics",
+		"DOI": "10.3389/fgene.2014.00098",
+		"ISSN": "1664-8021",
+		"journalAbbreviation": "Front Genet",
+		"language": "eng",
+		"note": "PMID: 24808906\nPMCID: PMC4010757",
+		"page": "98",
+		"source": "PubMed",
+		"title": "categoryCompare, an analytical tool based on feature annotations",
+		"volume": "5",
+		"author": [
+			{
+				"family": "Flight",
+				"given": "Robert M."
+			},
+			{
+				"family": "Harrison",
+				"given": "Benjamin J."
+			},
+			{
+				"family": "Mohammad",
+				"given": "Fahim"
+			},
+			{
+				"family": "Bunge",
+				"given": "Mary B."
+			},
+			{
+				"family": "Moon",
+				"given": "Lawrence D. F."
+			},
+			{
+				"family": "Petruska",
+				"given": "Jeffrey C."
+			},
+			{
+				"family": "Rouchka",
+				"given": "Eric C."
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2014"
+				]
+			]
+		}
+	},
+	{
+		"id": "kanehisaKEGGKyotoEncyclopedia2000",
+		"type": "article-journal",
+		"abstract": "KEGG (Kyoto Encyclopedia of Genes and Genomes) is a knowledge base for systematic analysis of gene functions, linking genomic information with higher order functional information. The genomic information is stored in the GENES database, which is a collection of gene catalogs for all the completely sequenced genomes and some partial genomes with up-to-date annotation of gene functions. The higher order functional information is stored in the PATHWAY database, which contains graphical representations of cellular processes, such as metabolism, membrane transport, signal transduction and cell cycle. The PATHWAY database is supplemented by a set of ortholog group tables for the information about conserved subpathways (pathway motifs), which are often encoded by positionally coupled genes on the chromosome and which are especially useful in predicting gene functions. A third database in KEGG is LIGAND for the information about chemical compounds, enzyme molecules and enzymatic reactions. KEGG provides Java graphics tools for browsing genome maps, comparing two genome maps and manipulating expression maps, as well as computational tools for sequence comparison, graph comparison and path computation. The KEGG databases are daily updated and made freely available (http://www. genome.ad.jp/kegg/).",
+		"container-title": "Nucleic Acids Research",
+		"DOI": "10.1093/nar/28.1.27",
+		"ISSN": "0305-1048",
+		"issue": "1",
+		"journalAbbreviation": "Nucleic Acids Res",
+		"language": "eng",
+		"note": "PMID: 10592173\nPMCID: PMC102409",
+		"page": "27-30",
+		"source": "PubMed",
+		"title": "KEGG: kyoto encyclopedia of genes and genomes",
+		"title-short": "KEGG",
+		"volume": "28",
+		"author": [
+			{
+				"family": "Kanehisa",
+				"given": "M."
+			},
+			{
+				"family": "Goto",
+				"given": "S."
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2000",
+					1,
+					1
+				]
+			]
+		}
+	},
+	{
+		"id": "kanehisaUnderstandingOriginEvolution2019",
+		"type": "article-journal",
+		"abstract": "In this era of high-throughput biology, bioinformatics has become a major discipline for making sense out of large-scale datasets. Bioinformatics is usually considered as a practical field developing databases and software tools for supporting other fields, rather than a fundamental scientific discipline for uncovering principles of biology. The KEGG resource that we have been developing is a reference knowledge base for biological interpretation of genome sequences and other high-throughput data. It is now one of the most utilized biological databases because of its practical values. For me personally, KEGG is a step toward understanding the origin and evolution of cellular organisms.",
+		"container-title": "Protein Science: A Publication of the Protein Society",
+		"DOI": "10.1002/pro.3715",
+		"ISSN": "1469-896X",
+		"issue": "11",
+		"journalAbbreviation": "Protein Sci",
+		"language": "eng",
+		"note": "PMID: 31441146\nPMCID: PMC6798127",
+		"page": "1947-1951",
+		"source": "PubMed",
+		"title": "Toward understanding the origin and evolution of cellular organisms",
+		"volume": "28",
+		"author": [
+			{
+				"family": "Kanehisa",
+				"given": "Minoru"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2019",
+					11
+				]
+			]
+		}
+	},
+	{
+		"id": "kanehisaKEGGIntegratingViruses2021",
+		"type": "article-journal",
+		"abstract": "KEGG (https://www.kegg.jp/) is a manually curated resource integrating eighteen databases categorized into systems, genomic, chemical and health information. It also provides KEGG mapping tools, which enable understanding of cellular and organism-level functions from genome sequences and other molecular datasets. KEGG mapping is a predictive method of reconstructing molecular network systems from molecular building blocks based on the concept of functional orthologs. Since the introduction of the KEGG NETWORK database, various diseases have been associated with network variants, which are perturbed molecular networks caused by human gene variants, viruses, other pathogens and environmental factors. The network variation maps are created as aligned sets of related networks showing, for example, how different viruses inhibit or activate specific cellular signaling pathways. The KEGG pathway maps are now integrated with network variation maps in the NETWORK database, as well as with conserved functional units of KEGG modules and reaction modules in the MODULE database. The KO database for functional orthologs continues to be improved and virus KOs are being expanded for better understanding of virus-cell interactions and for enabling prediction of viral perturbations.",
+		"container-title": "Nucleic Acids Research",
+		"DOI": "10.1093/nar/gkaa970",
+		"ISSN": "1362-4962",
+		"issue": "D1",
+		"journalAbbreviation": "Nucleic Acids Res",
+		"language": "eng",
+		"note": "PMID: 33125081\nPMCID: PMC7779016",
+		"page": "D545-D551",
+		"source": "PubMed",
+		"title": "KEGG: integrating viruses and cellular organisms",
+		"title-short": "KEGG",
+		"volume": "49",
+		"author": [
+			{
+				"family": "Kanehisa",
+				"given": "Minoru"
+			},
+			{
+				"family": "Furumichi",
+				"given": "Miho"
+			},
+			{
+				"family": "Sato",
+				"given": "Yoko"
+			},
+			{
+				"family": "Ishiguro-Watanabe",
+				"given": "Mari"
+			},
+			{
+				"family": "Tanabe",
+				"given": "Mao"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2021",
+					1,
+					8
+				]
+			]
+		}
+	},
+	{
+		"id": "jassalReactomePathwayKnowledgebase2020",
+		"type": "article-journal",
+		"abstract": "The Reactome Knowledgebase (https://reactome.org) provides molecular details of signal transduction, transport, DNA replication, metabolism and other cellular processes as an ordered network of molecular transformations in a single consistent data model, an extended version of a classic metabolic map. Reactome functions both as an archive of biological processes and as a tool for discovering functional relationships in data such as gene expression profiles or somatic mutation catalogs from tumor cells. To extend our ability to annotate human disease processes, we have implemented a new drug class and have used it initially to annotate drugs relevant to cardiovascular disease. Our annotation model depends on external domain experts to identify new areas for annotation and to review new content. New web pages facilitate recruitment of community experts and allow those who have contributed to Reactome to identify their contributions and link them to their ORCID records. To improve visualization of our content, we have implemented a new tool to automatically lay out the components of individual reactions with multiple options for downloading the reaction diagrams and associated data, and a new display of our event hierarchy that will facilitate visual interpretation of pathway analysis results.",
+		"container-title": "Nucleic Acids Research",
+		"DOI": "10.1093/nar/gkz1031",
+		"ISSN": "1362-4962",
+		"issue": "D1",
+		"journalAbbreviation": "Nucleic Acids Res",
+		"language": "eng",
+		"note": "PMID: 31691815\nPMCID: PMC7145712",
+		"page": "D498-D503",
+		"source": "PubMed",
+		"title": "The reactome pathway knowledgebase",
+		"volume": "48",
+		"author": [
+			{
+				"family": "Jassal",
+				"given": "Bijay"
+			},
+			{
+				"family": "Matthews",
+				"given": "Lisa"
+			},
+			{
+				"family": "Viteri",
+				"given": "Guilherme"
+			},
+			{
+				"family": "Gong",
+				"given": "Chuqiao"
+			},
+			{
+				"family": "Lorente",
+				"given": "Pascual"
+			},
+			{
+				"family": "Fabregat",
+				"given": "Antonio"
+			},
+			{
+				"family": "Sidiropoulos",
+				"given": "Konstantinos"
+			},
+			{
+				"family": "Cook",
+				"given": "Justin"
+			},
+			{
+				"family": "Gillespie",
+				"given": "Marc"
+			},
+			{
+				"family": "Haw",
+				"given": "Robin"
+			},
+			{
+				"family": "Loney",
+				"given": "Fred"
+			},
+			{
+				"family": "May",
+				"given": "Bruce"
+			},
+			{
+				"family": "Milacic",
+				"given": "Marija"
+			},
+			{
+				"family": "Rothfels",
+				"given": "Karen"
+			},
+			{
+				"family": "Sevilla",
+				"given": "Cristoffer"
+			},
+			{
+				"family": "Shamovsky",
+				"given": "Veronica"
+			},
+			{
+				"family": "Shorser",
+				"given": "Solomon"
+			},
+			{
+				"family": "Varusai",
+				"given": "Thawfeek"
+			},
+			{
+				"family": "Weiser",
+				"given": "Joel"
+			},
+			{
+				"family": "Wu",
+				"given": "Guanming"
+			},
+			{
+				"family": "Stein",
+				"given": "Lincoln"
+			},
+			{
+				"family": "Hermjakob",
+				"given": "Henning"
+			},
+			{
+				"family": "D'Eustachio",
+				"given": "Peter"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2020",
+					1,
+					8
+				]
+			]
+		}
+	},
+	{
+		"id": "ligtenbergReactomeDbSet2021",
+		"type": "book",
+		"title": "reactome.db: A set of annotation maps for reactome",
+		"version": "1.77.0",
+		"author": [
+			{
+				"family": "Ligtenberg",
+				"given": "Willem"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2021"
+				]
+			]
+		}
+	},
+	{
+		"id": "carlsonOrgHsEg2021",
+		"type": "book",
+		"title": "org.Hs.eg.db: Genome wide annotation for Human",
+		"version": "3.14.0",
+		"author": [
+			{
+				"family": "Carlson",
+				"given": "Marc"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2021"
+				]
+			]
+		}
+	},
+	{
+		"id": "tenenbaumKEGGRESTClientsideREST2021",
+		"type": "book",
+		"title": "KEGGREST: Client-side REST access to the kyoto encyclopedia of genes and genomes (KEGG)",
+		"version": "1.34.0",
+		"author": [
+			{
+				"family": "Tenenbaum",
+				"given": "Dan"
+			},
+			{
+				"family": "Maintainer",
+				"given": "Bioconductor Package"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2021"
+				]
+			]
+		}
+	},
+	{
+		"id": "carlsonGODbSet2021",
+		"type": "report",
+		"genre": "manual",
+		"title": "GO.db: A set of annotation maps describing the entire Gene Ontology",
+		"author": [
+			{
+				"family": "Carlson",
+				"given": "Marc"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2021"
+				]
+			]
+		}
+	},
+	{
+		"id": "ashburnerGeneOntologyTool2000",
+		"type": "article-journal",
+		"abstract": "Genomic sequencing has made it clear that a large fraction of the genes specifying the core biological functions are shared by all eukaryotes. Knowledge of the biological role of such shared proteins in one organism can often be transferred to other organisms. The goal of the Gene Ontology Consortium is to produce a dynamic, controlled vocabulary that can be applied to all eukaryotes even as knowledge of gene and protein roles in cells is accumulating and changing. To this end, three independent ontologies accessible on the World-Wide Web (http://www.geneontology.org) are being constructed: biological process, molecular function and cellular component.",
+		"container-title": "Nature genetics",
+		"DOI": "10.1038/75556",
+		"ISSN": "1061-4036",
+		"issue": "1",
+		"journalAbbreviation": "Nat Genet",
+		"note": "PMID: 10802651\nPMCID: PMC3037419",
+		"page": "25-29",
+		"source": "PubMed Central",
+		"title": "Gene Ontology: tool for the unification of biology",
+		"title-short": "Gene Ontology",
+		"URL": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3037419/",
+		"volume": "25",
+		"author": [
+			{
+				"family": "Ashburner",
+				"given": "Michael"
+			},
+			{
+				"family": "Ball",
+				"given": "Catherine A."
+			},
+			{
+				"family": "Blake",
+				"given": "Judith A."
+			},
+			{
+				"family": "Botstein",
+				"given": "David"
+			},
+			{
+				"family": "Butler",
+				"given": "Heather"
+			},
+			{
+				"family": "Cherry",
+				"given": "J. Michael"
+			},
+			{
+				"family": "Davis",
+				"given": "Allan P."
+			},
+			{
+				"family": "Dolinski",
+				"given": "Kara"
+			},
+			{
+				"family": "Dwight",
+				"given": "Selina S."
+			},
+			{
+				"family": "Eppig",
+				"given": "Janan T."
+			},
+			{
+				"family": "Harris",
+				"given": "Midori A."
+			},
+			{
+				"family": "Hill",
+				"given": "David P."
+			},
+			{
+				"family": "Issel-Tarver",
+				"given": "Laurie"
+			},
+			{
+				"family": "Kasarskis",
+				"given": "Andrew"
+			},
+			{
+				"family": "Lewis",
+				"given": "Suzanna"
+			},
+			{
+				"family": "Matese",
+				"given": "John C."
+			},
+			{
+				"family": "Richardson",
+				"given": "Joel E."
+			},
+			{
+				"family": "Ringwald",
+				"given": "Martin"
+			},
+			{
+				"family": "Rubin",
+				"given": "Gerald M."
+			},
+			{
+				"family": "Sherlock",
+				"given": "Gavin"
+			}
+		],
+		"accessed": {
+			"date-parts": [
+				[
+					"2021",
+					11,
+					3
+				]
+			]
+		},
+		"issued": {
+			"date-parts": [
+				[
+					"2000",
+					5
+				]
+			]
+		}
+	},
+	{
+		"id": "thegeneontologyconsortiumGeneOntologyResource2021",
+		"type": "article-journal",
+		"abstract": "The Gene Ontology Consortium (GOC) provides the most comprehensive resource currently available for computable knowledge regarding the functions of genes and gene products. Here, we report the advances of the consortium over the past two years. The new GO-CAM annotation framework was notably improved, and we formalized the model with a computational schema to check and validate the rapidly increasing repository of 2838 GO-CAMs. In addition, we describe the impacts of several collaborations to reﬁne GO and report a 10% increase in the number of GO annotations, a 25% increase in annotated gene products, and over 9,400 new scientiﬁc articles annotated. As the project matures, we continue our efforts to review older annotations in light of newer ﬁndings, and, to maintain consistency with other ontologies. As a result, 20 000 annotations derived from experimental data were reviewed, corresponding to 2.5% of experimental GO annotations. The website (http://geneontology.org) was redesigned for quick access to documentation, downloads and tools. To maintain an accurate resource and support traceability and reproducibility, we have made available a historical archive covering the past 15 years of GO data with a consistent format and ﬁle structure for both the ontology and annotations.",
+		"container-title": "Nucleic Acids Research",
+		"DOI": "10.1093/nar/gkaa1113",
+		"ISSN": "0305-1048, 1362-4962",
+		"issue": "D1",
+		"language": "en",
+		"page": "D325-D334",
+		"source": "DOI.org (Crossref)",
+		"title": "The Gene Ontology resource: enriching a GOld mine",
+		"title-short": "The Gene Ontology resource",
+		"URL": "https://academic.oup.com/nar/article/49/D1/D325/6027811",
+		"volume": "49",
+		"author": [
+			{
+				"literal": "The Gene Ontology Consortium"
+			},
+			{
+				"family": "Carbon",
+				"given": "Seth"
+			},
+			{
+				"family": "Douglass",
+				"given": "Eric"
+			},
+			{
+				"family": "Good",
+				"given": "Benjamin M"
+			},
+			{
+				"family": "Unni",
+				"given": "Deepak R"
+			},
+			{
+				"family": "Harris",
+				"given": "Nomi L"
+			},
+			{
+				"family": "Mungall",
+				"given": "Christopher J"
+			},
+			{
+				"family": "Basu",
+				"given": "Siddartha"
+			},
+			{
+				"family": "Chisholm",
+				"given": "Rex L"
+			},
+			{
+				"family": "Dodson",
+				"given": "Robert J"
+			},
+			{
+				"family": "Hartline",
+				"given": "Eric"
+			},
+			{
+				"family": "Fey",
+				"given": "Petra"
+			},
+			{
+				"family": "Thomas",
+				"given": "Paul D"
+			},
+			{
+				"family": "Albou",
+				"given": "Laurent-Philippe"
+			},
+			{
+				"family": "Ebert",
+				"given": "Dustin"
+			},
+			{
+				"family": "Kesling",
+				"given": "Michael J"
+			},
+			{
+				"family": "Mi",
+				"given": "Huaiyu"
+			},
+			{
+				"family": "Muruganujan",
+				"given": "Anushya"
+			},
+			{
+				"family": "Huang",
+				"given": "Xiaosong"
+			},
+			{
+				"family": "Mushayahama",
+				"given": "Tremayne"
+			},
+			{
+				"family": "LaBonte",
+				"given": "Sandra A"
+			},
+			{
+				"family": "Siegele",
+				"given": "Deborah A"
+			},
+			{
+				"family": "Antonazzo",
+				"given": "Giulia"
+			},
+			{
+				"family": "Attrill",
+				"given": "Helen"
+			},
+			{
+				"family": "Brown",
+				"given": "Nick H"
+			},
+			{
+				"family": "Garapati",
+				"given": "Phani"
+			},
+			{
+				"family": "Marygold",
+				"given": "Steven J"
+			},
+			{
+				"family": "Trovisco",
+				"given": "Vitor"
+			},
+			{
+				"family": "Santos",
+				"given": "Gil",
+				"non-dropping-particle": "dos"
+			},
+			{
+				"family": "Falls",
+				"given": "Kathleen"
+			},
+			{
+				"family": "Tabone",
+				"given": "Christopher"
+			},
+			{
+				"family": "Zhou",
+				"given": "Pinglei"
+			},
+			{
+				"family": "Goodman",
+				"given": "Joshua L"
+			},
+			{
+				"family": "Strelets",
+				"given": "Victor B"
+			},
+			{
+				"family": "Thurmond",
+				"given": "Jim"
+			},
+			{
+				"family": "Garmiri",
+				"given": "Penelope"
+			},
+			{
+				"family": "Ishtiaq",
+				"given": "Rizwan"
+			},
+			{
+				"family": "Rodríguez-López",
+				"given": "Milagros"
+			},
+			{
+				"family": "Acencio",
+				"given": "Marcio L"
+			},
+			{
+				"family": "Kuiper",
+				"given": "Martin"
+			},
+			{
+				"family": "Lægreid",
+				"given": "Astrid"
+			},
+			{
+				"family": "Logie",
+				"given": "Colin"
+			},
+			{
+				"family": "Lovering",
+				"given": "Ruth C"
+			},
+			{
+				"family": "Kramarz",
+				"given": "Barbara"
+			},
+			{
+				"family": "Saverimuttu",
+				"given": "Shirin C C"
+			},
+			{
+				"family": "Pinheiro",
+				"given": "Sandra M"
+			},
+			{
+				"family": "Gunn",
+				"given": "Heather"
+			},
+			{
+				"family": "Su",
+				"given": "Renzhi"
+			},
+			{
+				"family": "Thurlow",
+				"given": "Katherine E"
+			},
+			{
+				"family": "Chibucos",
+				"given": "Marcus"
+			},
+			{
+				"family": "Giglio",
+				"given": "Michelle"
+			},
+			{
+				"family": "Nadendla",
+				"given": "Suvarna"
+			},
+			{
+				"family": "Munro",
+				"given": "James"
+			},
+			{
+				"family": "Jackson",
+				"given": "Rebecca"
+			},
+			{
+				"family": "Duesbury",
+				"given": "Margaret J"
+			},
+			{
+				"family": "Del-Toro",
+				"given": "Noemi"
+			},
+			{
+				"family": "Meldal",
+				"given": "Birgit H M"
+			},
+			{
+				"family": "Paneerselvam",
+				"given": "Kalpana"
+			},
+			{
+				"family": "Perfetto",
+				"given": "Livia"
+			},
+			{
+				"family": "Porras",
+				"given": "Pablo"
+			},
+			{
+				"family": "Orchard",
+				"given": "Sandra"
+			},
+			{
+				"family": "Shrivastava",
+				"given": "Anjali"
+			},
+			{
+				"family": "Chang",
+				"given": "Hsin-Yu"
+			},
+			{
+				"family": "Finn",
+				"given": "Robert Daniel"
+			},
+			{
+				"family": "Mitchell",
+				"given": "Alexander Lawson"
+			},
+			{
+				"family": "Rawlings",
+				"given": "Neil David"
+			},
+			{
+				"family": "Richardson",
+				"given": "Lorna"
+			},
+			{
+				"family": "Sangrador-Vegas",
+				"given": "Amaia"
+			},
+			{
+				"family": "Blake",
+				"given": "Judith A"
+			},
+			{
+				"family": "Christie",
+				"given": "Karen R"
+			},
+			{
+				"family": "Dolan",
+				"given": "Mary E"
+			},
+			{
+				"family": "Drabkin",
+				"given": "Harold J"
+			},
+			{
+				"family": "Hill",
+				"given": "David P"
+			},
+			{
+				"family": "Ni",
+				"given": "Li"
+			},
+			{
+				"family": "Sitnikov",
+				"given": "Dmitry M"
+			},
+			{
+				"family": "Harris",
+				"given": "Midori A"
+			},
+			{
+				"family": "Oliver",
+				"given": "Stephen G"
+			},
+			{
+				"family": "Rutherford",
+				"given": "Kim"
+			},
+			{
+				"family": "Wood",
+				"given": "Valerie"
+			},
+			{
+				"family": "Hayles",
+				"given": "Jaqueline"
+			},
+			{
+				"family": "Bähler",
+				"given": "Jürg"
+			},
+			{
+				"family": "Bolton",
+				"given": "Elizabeth R"
+			},
+			{
+				"family": "De Pons",
+				"given": "Jeffery L"
+			},
+			{
+				"family": "Dwinell",
+				"given": "Melinda R"
+			},
+			{
+				"family": "Hayman",
+				"given": "G Thomas"
+			},
+			{
+				"family": "Kaldunski",
+				"given": "Mary L"
+			},
+			{
+				"family": "Kwitek",
+				"given": "Anne E"
+			},
+			{
+				"family": "Laulederkind",
+				"given": "Stanley J F"
+			},
+			{
+				"family": "Plasterer",
+				"given": "Cody"
+			},
+			{
+				"family": "Tutaj",
+				"given": "Marek A"
+			},
+			{
+				"family": "Vedi",
+				"given": "Mahima"
+			},
+			{
+				"family": "Wang",
+				"given": "Shur-Jen"
+			},
+			{
+				"family": "D’Eustachio",
+				"given": "Peter"
+			},
+			{
+				"family": "Matthews",
+				"given": "Lisa"
+			},
+			{
+				"family": "Balhoff",
+				"given": "James P"
+			},
+			{
+				"family": "Aleksander",
+				"given": "Suzi A"
+			},
+			{
+				"family": "Alexander",
+				"given": "Michael J"
+			},
+			{
+				"family": "Cherry",
+				"given": "J Michael"
+			},
+			{
+				"family": "Engel",
+				"given": "Stacia R"
+			},
+			{
+				"family": "Gondwe",
+				"given": "Felix"
+			},
+			{
+				"family": "Karra",
+				"given": "Kalpana"
+			},
+			{
+				"family": "Miyasato",
+				"given": "Stuart R"
+			},
+			{
+				"family": "Nash",
+				"given": "Robert S"
+			},
+			{
+				"family": "Simison",
+				"given": "Matt"
+			},
+			{
+				"family": "Skrzypek",
+				"given": "Marek S"
+			},
+			{
+				"family": "Weng",
+				"given": "Shuai"
+			},
+			{
+				"family": "Wong",
+				"given": "Edith D"
+			},
+			{
+				"family": "Feuermann",
+				"given": "Marc"
+			},
+			{
+				"family": "Gaudet",
+				"given": "Pascale"
+			},
+			{
+				"family": "Morgat",
+				"given": "Anne"
+			},
+			{
+				"family": "Bakker",
+				"given": "Erica"
+			},
+			{
+				"family": "Berardini",
+				"given": "Tanya Z"
+			},
+			{
+				"family": "Reiser",
+				"given": "Leonore"
+			},
+			{
+				"family": "Subramaniam",
+				"given": "Shabari"
+			},
+			{
+				"family": "Huala",
+				"given": "Eva"
+			},
+			{
+				"family": "Arighi",
+				"given": "Cecilia N"
+			},
+			{
+				"family": "Auchincloss",
+				"given": "Andrea"
+			},
+			{
+				"family": "Axelsen",
+				"given": "Kristian"
+			},
+			{
+				"family": "Argoud-Puy",
+				"given": "Ghislaine"
+			},
+			{
+				"family": "Bateman",
+				"given": "Alex"
+			},
+			{
+				"family": "Blatter",
+				"given": "Marie-Claude"
+			},
+			{
+				"family": "Boutet",
+				"given": "Emmanuel"
+			},
+			{
+				"family": "Bowler",
+				"given": "Emily"
+			},
+			{
+				"family": "Breuza",
+				"given": "Lionel"
+			},
+			{
+				"family": "Bridge",
+				"given": "Alan"
+			},
+			{
+				"family": "Britto",
+				"given": "Ramona"
+			},
+			{
+				"family": "Bye-A-Jee",
+				"given": "Hema"
+			},
+			{
+				"family": "Casas",
+				"given": "Cristina Casals"
+			},
+			{
+				"family": "Coudert",
+				"given": "Elisabeth"
+			},
+			{
+				"family": "Denny",
+				"given": "Paul"
+			},
+			{
+				"family": "Estreicher",
+				"given": "Anne"
+			},
+			{
+				"family": "Famiglietti",
+				"given": "Maria Livia"
+			},
+			{
+				"family": "Georghiou",
+				"given": "George"
+			},
+			{
+				"family": "Gos",
+				"given": "Arnaud"
+			},
+			{
+				"family": "Gruaz-Gumowski",
+				"given": "Nadine"
+			},
+			{
+				"family": "Hatton-Ellis",
+				"given": "Emma"
+			},
+			{
+				"family": "Hulo",
+				"given": "Chantal"
+			},
+			{
+				"family": "Ignatchenko",
+				"given": "Alexandr"
+			},
+			{
+				"family": "Jungo",
+				"given": "Florence"
+			},
+			{
+				"family": "Laiho",
+				"given": "Kati"
+			},
+			{
+				"family": "Le Mercier",
+				"given": "Philippe"
+			},
+			{
+				"family": "Lieberherr",
+				"given": "Damien"
+			},
+			{
+				"family": "Lock",
+				"given": "Antonia"
+			},
+			{
+				"family": "Lussi",
+				"given": "Yvonne"
+			},
+			{
+				"family": "MacDougall",
+				"given": "Alistair"
+			},
+			{
+				"family": "Magrane",
+				"given": "Michele"
+			},
+			{
+				"family": "Martin",
+				"given": "Maria J"
+			},
+			{
+				"family": "Masson",
+				"given": "Patrick"
+			},
+			{
+				"family": "Natale",
+				"given": "Darren A"
+			},
+			{
+				"family": "Hyka-Nouspikel",
+				"given": "Nevila"
+			},
+			{
+				"family": "Orchard",
+				"given": "Sandra"
+			},
+			{
+				"family": "Pedruzzi",
+				"given": "Ivo"
+			},
+			{
+				"family": "Pourcel",
+				"given": "Lucille"
+			},
+			{
+				"family": "Poux",
+				"given": "Sylvain"
+			},
+			{
+				"family": "Pundir",
+				"given": "Sangya"
+			},
+			{
+				"family": "Rivoire",
+				"given": "Catherine"
+			},
+			{
+				"family": "Speretta",
+				"given": "Elena"
+			},
+			{
+				"family": "Sundaram",
+				"given": "Shyamala"
+			},
+			{
+				"family": "Tyagi",
+				"given": "Nidhi"
+			},
+			{
+				"family": "Warner",
+				"given": "Kate"
+			},
+			{
+				"family": "Zaru",
+				"given": "Rossana"
+			},
+			{
+				"family": "Wu",
+				"given": "Cathy H"
+			},
+			{
+				"family": "Diehl",
+				"given": "Alexander D"
+			},
+			{
+				"family": "Chan",
+				"given": "Juancarlos N"
+			},
+			{
+				"family": "Grove",
+				"given": "Christian"
+			},
+			{
+				"family": "Lee",
+				"given": "Raymond Y N"
+			},
+			{
+				"family": "Muller",
+				"given": "Hans-Michael"
+			},
+			{
+				"family": "Raciti",
+				"given": "Daniela"
+			},
+			{
+				"family": "Van Auken",
+				"given": "Kimberly"
+			},
+			{
+				"family": "Sternberg",
+				"given": "Paul W"
+			},
+			{
+				"family": "Berriman",
+				"given": "Matthew"
+			},
+			{
+				"family": "Paulini",
+				"given": "Michael"
+			},
+			{
+				"family": "Howe",
+				"given": "Kevin"
+			},
+			{
+				"family": "Gao",
+				"given": "Sibyl"
+			},
+			{
+				"family": "Wright",
+				"given": "Adam"
+			},
+			{
+				"family": "Stein",
+				"given": "Lincoln"
+			},
+			{
+				"family": "Howe",
+				"given": "Douglas G"
+			},
+			{
+				"family": "Toro",
+				"given": "Sabrina"
+			},
+			{
+				"family": "Westerfield",
+				"given": "Monte"
+			},
+			{
+				"family": "Jaiswal",
+				"given": "Pankaj"
+			},
+			{
+				"family": "Cooper",
+				"given": "Laurel"
+			},
+			{
+				"family": "Elser",
+				"given": "Justin"
+			}
+		],
+		"accessed": {
+			"date-parts": [
+				[
+					"2021",
+					11,
+					3
+				]
+			]
+		},
+		"issued": {
+			"date-parts": [
+				[
+					"2021",
+					1,
+					8
+				]
+			]
+		}
+	},
+	{
+		"id": "uhlenProteomicsTissuebasedMap2015",
+		"type": "article-journal",
+		"abstract": "Resolving the molecular details of proteome variation in the different tissues and organs of the human body will greatly increase our knowledge of human biology and disease. Here, we present a map of the human tissue proteome based on an integrated omics approach that involves quantitative transcriptomics at the tissue and organ level, combined with tissue microarray-based immunohistochemistry, to achieve spatial localization of proteins down to the single-cell level. Our tissue-based analysis detected more than 90% of the putative protein-coding genes. We used this approach to explore the human secretome, the membrane proteome, the druggable proteome, the cancer proteome, and the metabolic functions in 32 different tissues and organs. All the data are integrated in an interactive Web-based database that allows exploration of individual proteins, as well as navigation of global expression patterns, in all major tissues and organs in the human body.",
+		"container-title": "Science (New York, N.Y.)",
+		"DOI": "10.1126/science.1260419",
+		"ISSN": "1095-9203",
+		"issue": "6220",
+		"journalAbbreviation": "Science",
+		"language": "eng",
+		"note": "PMID: 25613900",
+		"page": "1260419",
+		"source": "PubMed",
+		"title": "Proteomics. Tissue-based map of the human proteome",
+		"volume": "347",
+		"author": [
+			{
+				"family": "Uhlén",
+				"given": "Mathias"
+			},
+			{
+				"family": "Fagerberg",
+				"given": "Linn"
+			},
+			{
+				"family": "Hallström",
+				"given": "Björn M."
+			},
+			{
+				"family": "Lindskog",
+				"given": "Cecilia"
+			},
+			{
+				"family": "Oksvold",
+				"given": "Per"
+			},
+			{
+				"family": "Mardinoglu",
+				"given": "Adil"
+			},
+			{
+				"family": "Sivertsson",
+				"given": "Åsa"
+			},
+			{
+				"family": "Kampf",
+				"given": "Caroline"
+			},
+			{
+				"family": "Sjöstedt",
+				"given": "Evelina"
+			},
+			{
+				"family": "Asplund",
+				"given": "Anna"
+			},
+			{
+				"family": "Olsson",
+				"given": "IngMarie"
+			},
+			{
+				"family": "Edlund",
+				"given": "Karolina"
+			},
+			{
+				"family": "Lundberg",
+				"given": "Emma"
+			},
+			{
+				"family": "Navani",
+				"given": "Sanjay"
+			},
+			{
+				"family": "Szigyarto",
+				"given": "Cristina Al-Khalili"
+			},
+			{
+				"family": "Odeberg",
+				"given": "Jacob"
+			},
+			{
+				"family": "Djureinovic",
+				"given": "Dijana"
+			},
+			{
+				"family": "Takanen",
+				"given": "Jenny Ottosson"
+			},
+			{
+				"family": "Hober",
+				"given": "Sophia"
+			},
+			{
+				"family": "Alm",
+				"given": "Tove"
+			},
+			{
+				"family": "Edqvist",
+				"given": "Per-Henrik"
+			},
+			{
+				"family": "Berling",
+				"given": "Holger"
+			},
+			{
+				"family": "Tegel",
+				"given": "Hanna"
+			},
+			{
+				"family": "Mulder",
+				"given": "Jan"
+			},
+			{
+				"family": "Rockberg",
+				"given": "Johan"
+			},
+			{
+				"family": "Nilsson",
+				"given": "Peter"
+			},
+			{
+				"family": "Schwenk",
+				"given": "Jochen M."
+			},
+			{
+				"family": "Hamsten",
+				"given": "Marica"
+			},
+			{
+				"family": "Feilitzen",
+				"given": "Kalle",
+				"non-dropping-particle": "von"
+			},
+			{
+				"family": "Forsberg",
+				"given": "Mattias"
+			},
+			{
+				"family": "Persson",
+				"given": "Lukas"
+			},
+			{
+				"family": "Johansson",
+				"given": "Fredric"
+			},
+			{
+				"family": "Zwahlen",
+				"given": "Martin"
+			},
+			{
+				"family": "Heijne",
+				"given": "Gunnar",
+				"non-dropping-particle": "von"
+			},
+			{
+				"family": "Nielsen",
+				"given": "Jens"
+			},
+			{
+				"family": "Pontén",
+				"given": "Fredrik"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2015",
+					1,
+					23
+				]
+			]
+		}
+	},
+	{
+		"id": "sakaiDendsortModularLeaf2014",
+		"type": "article-journal",
+		"abstract": "Dendrograms are graphical representations of binary tree structures resulting from agglomerative hierarchical clustering. In Life Science, a cluster heat map is a widely accepted visualization technique that utilizes the leaf order of a dendrogram to reorder the rows and columns of the data table. The derived linear order is more meaningful than a random order, because it groups similar items together. However, two consecutive items can be quite dissimilar despite proximity in the order. In addition, there are 2 (n-1) possible orderings given n input elements as the orientation of clusters at each merge can be flipped without affecting the hierarchical structure. We present two modular leaf ordering methods to encode both the monotonic order in which clusters are merged and the nested cluster relationships more faithfully in the resulting dendrogram structure. We compare dendrogram and cluster heat map visualizations created using our heuristics to the default heuristic in R and seriation-based leaf ordering methods. We find that our methods lead to a dendrogram structure with global patterns that are easier to interpret, more legible given a limited display space, and more insightful for some cases. The implementation of methods is available as an R package, named \"dendsort\", from the CRAN package repository. Further examples, documentations, and the source code are available at [https://bitbucket.org/biovizleuven/dendsort/].",
+		"container-title": "F1000Research",
+		"DOI": "10.12688/f1000research.4784.1",
+		"ISSN": "2046-1402",
+		"journalAbbreviation": "F1000Res",
+		"language": "eng",
+		"note": "PMID: 25232468\nPMCID: PMC4162509",
+		"page": "177",
+		"source": "PubMed",
+		"title": "dendsort: modular leaf ordering methods for dendrogram representations in R",
+		"title-short": "dendsort",
+		"volume": "3",
+		"author": [
+			{
+				"family": "Sakai",
+				"given": "Ryo"
+			},
+			{
+				"family": "Winand",
+				"given": "Raf"
+			},
+			{
+				"family": "Verbeiren",
+				"given": "Toni"
+			},
+			{
+				"family": "Moere",
+				"given": "Andrew Vande"
+			},
+			{
+				"family": "Aerts",
+				"given": "Jan"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2014"
+				]
+			]
+		}
+	},
+	{
+		"id": "rcoreteamLanguageEnvironmentStatistical2021",
+		"type": "book",
+		"event-place": "Vienna, Austria",
+		"note": "tex.organization: R Foundation for Statistical Computing",
+		"publisher-place": "Vienna, Austria",
+		"title": "R: A language and environment for statistical computing",
+		"URL": "https://www.R-project.org/",
+		"version": "4.1.0",
+		"author": [
+			{
+				"literal": "R Core Team"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2021"
+				]
+			]
+		}
+	},
+	{
+		"id": "guComplexHeatmapsReveal2016",
+		"type": "article-journal",
+		"container-title": "Bioinformatics (Oxford, England)",
+		"journalAbbreviation": "Bioinformatics",
+		"title": "Complex heatmaps reveal patterns and correlations in multidimensional genomic data",
+		"author": [
+			{
+				"family": "Gu",
+				"given": "Zuguang"
+			},
+			{
+				"family": "Eils",
+				"given": "Roland"
+			},
+			{
+				"family": "Schlesner",
+				"given": "Matthias"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2016"
+				]
+			]
+		}
+	}
+]

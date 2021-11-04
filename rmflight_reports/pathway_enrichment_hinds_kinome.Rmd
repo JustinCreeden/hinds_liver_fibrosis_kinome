@@ -7,6 +7,7 @@ output:
   html_notebook: default
   html_document:
     df_print: paged
+bibliography: '`r here::here("rmflight_reports", "Hinds_Kinome_references.json")`'
 editor_options: 
   chunk_output_type: console
 ---
@@ -47,8 +48,8 @@ library(KEGGgraph)
 library(ICIKendallTau)
 theme_set(cowplot::theme_cowplot())
 knitr::opts_chunk$set(fig.width = 8, fig.height = 8)
-source(here::here("kea3_functions.R"))
-save_loc = here::here("pathway_enrichment_2021-09-29")
+source(here::here("rmflight_reports/kea3_functions.R"))
+save_loc = here::here("rmflight_reports/pathway_enrichment_2021-09-29")
 
 gene_list_files = dir(here::here("input"), pattern = "^z", full.names = TRUE)
 
@@ -93,8 +94,8 @@ specific_entrez = dplyr::left_join(data.frame(SYMBOL = specific_list), org_hs_df
 ## GO Enrichment
 
 ```{r go_enrichment}
-go_all = readRDS(here::here("go_all.rds"))
-go_bp = readRDS(here::here("go_bp.rds"))
+go_all = readRDS(here::here("rmflight_reports/go_all.rds"))
+go_bp = readRDS(here::here("rmflight_reports/go_bp.rds"))
 human_go_all = hypergeometric_feature_enrichment(
   new("hypergeom_features", significant = human_entrez,
       universe = kinase_entrez,
@@ -142,7 +143,7 @@ dim(gobp_table)
 ## KEGG
 
 ```{r kegg_enrichment}
-kegg_annotation = readRDS(here::here("kegg_annotation.rds"))
+kegg_annotation = readRDS(here::here("rmflight_reports/kegg_annotation.rds"))
 
 all_kegg = unique(unlist(kegg_annotation@annotation_features))
 
@@ -173,7 +174,7 @@ So, one issue with the KEGG pathways, is they don't seem to contain an annotatio
 In contrast, reactome seems to have it.
 
 ```{r reactome_annotation}
-reactome_annotation = readRDS(here::here("reactome_annotation.rds"))
+reactome_annotation = readRDS(here::here("rmflight_reports/reactome_annotation.rds"))
 reactome_path_ddr1 = "R-HSA-1474244"
 ```
 
@@ -225,17 +226,22 @@ dim(interesting_table)
 
 ```{r export_tables}
 kegg_table = add_genes(kegg_table, kegg_sig, org_hs_df) %>%
+  dplyr::filter(n_annotated <= 500) %>%
   dplyr::arrange(human.padjust)
 gobp_table = add_genes(gobp_table, bp_sig, org_hs_df) %>%
+  dplyr::filter(n_annotated <= 500) %>%
   dplyr::arrange(human.padjust)
 reactome_table = add_genes(reactome_table, reactome_sig, org_hs_df) %>%
+  dplyr::filter(n_annotated <= 500) %>%
   dplyr::arrange(human.padjust)
+
+combined_annot = c(kegg_annotation@annotation_features[kegg_table$path_id], go_bp@annotation_features[gobp_table$path_id], reactome_annotation@annotation_features[reactome_table$path_id])
 
 export_pathway_tables(list(KEGG = kegg_table,
                            REACTOME = reactome_table,
                            GOBP = gobp_table,
                            ADHESION = interesting_table),
-                      pathway_file = "pathway_tables.xlsx")
+                      pathway_file = here::here("rmflight_reports/pathway_tables.xlsx"))
 ```
 
 Finally, we can use Kendall-tau correlation to ask how similar the p-values are within each table between mouse and human.
@@ -298,9 +304,12 @@ We merged STK and PTK results together.
 * Results:
   * See **pathway_tables_XXX.xlsx** for the enriched pathways.
 Each pathway database is a separate worksheet, as well as those pathways related to extracellular matrix or adhesion.
+Each worksheet is sorted by human adjusted-p-value.
   * Signaling, in all three sources.
 This isn't that surprising given we have the kinases.
 I had hoped modifying the background would suppress these enrichments a bit, but no luck.
+  * In particular, however is PI3K signaling at the top p-values in KEGG and Reactome, and also peptidyl-tyrosine phosphorylation in GO.BP.
+    * These match a paper that Hunter identified: https://pubmed.ncbi.nlm.nih.gov/32681257/
   * KEGG, returned the pathway "Non-alcoholic fatty liver disease" as significant in both mouse and human, which is one pathway that leads to liver fibrosis.
   * Also the pathways "Axon guidance", "Osteoclast differentiation", "Focal adhesion" and "Adherens junction" all involve extracellular matrix regulation.
   * Similar story in Reactome.
@@ -321,3 +330,19 @@ The results show that both organisms pathway enrichment are rather similar, with
 * n_specific: number of genes in that pathway that are present in the very specific gene list previously sent by Justin.
 * source: the pathway source.
 * genes: which genes from the UKA enriched gene list are annotated to the pathway.
+
+## Methods Write Up
+
+Gene symbols were mapped to Entrez gene identifiers using the Homo sapiens Bioconductor database package (org.Hs.eg.db) [@carlsonOrgHsEg2021].
+Gene annotations for Gene Ontology (GO) biological process (BP) [@ashburnerGeneOntologyTool2000] also came from the GOALL column of the org.Hs.eg.db package.
+Descriptions for each GO Term were extracted from the GO.db package. [@carlsonGODbSet2021]
+Kyoto Encyclopedia Genes and Genomes (KEGG) [@kanehisaKEGGKyotoEncyclopedia2000; @kanehisaUnderstandingOriginEvolution2019; kanehisaKEGGIntegratingViruses2021] pathway annotations were queried using KEGGREST package [@tenenbaumKEGGRESTClientsideREST2021] on 2021-11-01.
+Reactome pathway annotations [@jassalReactomePathwayKnowledgebase2020] came from the reactome.db package [@ligtenbergReactomeDbSet2021].
+For each source, a categoryCompare2 (version 0.99.158) [@flightCategoryCompare22021; @flightCategoryCompareAnalyticalTool2014] annotation object was created.
+KEA3 [@kuleshovKEA3ImprovedKinase2021] annotation files for kinase binding were used to define the background set of genes, including all the kinases and their targets.
+Hypergeometric enrichment was run for each of human and mouse differential genes after combining the gene lists for both STK and PTK results, for each pathway source.
+P-values were adjusted using the Benjamini-Hochberg procedure [@benjaminiControllingFalseDiscovery1995].
+After combining human and mouse results, significant pathways were those with an adjusted p-value <= `r gocut` (GO and KEGG) or `r reactome_cut` (Reactome) in either human or mouse, with at least 2 genes from the significant list, and no more than 500 genes annotated to the pathway.
+The similarity of human and mouse enrichments was evaluated using Kendall's tau on the adjusted p-values, calculated using the ICIKendallTau R package [@ICIKendallTau2021].
+
+## References
