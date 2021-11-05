@@ -81,7 +81,7 @@ We need to filter the background down to the kinases and their targets first her
 kinase_files = dir(here::here("kea3_datasets"), full.names = TRUE)
 kinase_files = grep("Cheng.KSIN|PTMsigDB|PhosD.All|STRING.bind", kinase_files, value = TRUE)
 kinase_data = purrr::map(kinase_files, parse_gmt)
-kinase_genes = unique(unlist(kinase_data))
+kinase_genes = unique(c(unlist(kinase_data)), unique(unlist(purrr::map(kinase_data, ~ names(.x)))))
 kinase_entrez = dplyr::left_join(data.frame(SYMBOL = kinase_genes), org_hs_df, by = "SYMBOL") %>%
   dplyr::filter(!is.na(ENTREZID)) %>%
   dplyr::pull(ENTREZID)
