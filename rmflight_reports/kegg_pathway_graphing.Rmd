@@ -1,0 +1,410 @@
+---
+title: "KEGG Pathway Drawing"
+author: "Robert M Flight"
+output:
+  word_document: default
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+bibliography: '`r here::here("rmflight_reports", "Hinds_Kinome_references.json")`'
+---
+
+The [final pathway](#final-pathway) that should be used is at the end of this document.
+
+## Purpose
+
+To generate interpretable graphs from KEGG Pathway maps.
+
+## Data
+
+Parsed KGML from KEGG for pathways for the MAPK, PI3K, RAS and EGFR pathways previously identified from pathway enrichment, as well as the differential kinases and their targets.
+
+## Methods
+
+```{r setup}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, fig.width = 10, fig.height = 8, out.width= "70%")
+```
+
+```{r packages}
+library(tidygraph)
+library(dplyr)
+library(ggraph)
+library(org.Hs.eg.db)
+source(here::here("rmflight_reports", "kea3_functions.R"))
+theme_set(cowplot::theme_cowplot())
+```
+
+```{r data}
+gene_list_files = dir(here::here("input"), pattern = "^z", full.names = TRUE)
+gene_lists = purrr::map(gene_list_files, ~ scan(.x, character(), sep = "\n", quiet = TRUE, skip = 1))
+names(gene_lists) = c("human_ptk", "mouse_ptk", "human_stk", "mouse_stk")
+
+human_list = unique(unlist(gene_lists[c("human_ptk", "human_stk")]))
+mouse_list = unique(unlist(gene_lists[c("mouse_ptk", "mouse_stk")]))
+
+specific_list = scan(here::here("input", "very_specific_genelist.txt"), what = character(), sep = "\n", quiet = TRUE)
+
+kea3_files = dir(here::here("kea3_datasets"), full.names = TRUE)
+kea3_files = grep("Cheng.KSIN|PTMsigDB|PhosD.All|STRING.bind", kea3_files, value = TRUE)
+kea3_data = purrr::map(kea3_files, parse_gmt)
+kea3_df = purrr::map_df(kea3_data, function(in_data){
+  purrr::imap_dfr(in_data, function(targets, kinase){
+    data.frame(from = kinase, to = targets)
+  })
+})
+
+kegg_graphs = readRDS(here::here("rmflight_reports", "kegg_pathway_graphs.rds"))
+all_entrez = keys(org.Hs.eg.db)
+org_hs_df = select(org.Hs.eg.db, keys = all_entrez, columns = "SYMBOL")
+
+specific_to_collapsed = read.table(here::here("rmflight_reports", "full_nodes_collapsed.csv"), sep = "\t", header = TRUE)
+
+uka_list = unique(c(human_list, mouse_list))
+```
+
+## Work With Full Graph
+
+To start, we will work with the full graph and see what happens.
+
+```{r full_graph}
+full_symbol_df = purrr::map_df(kegg_graphs, function(.x){
+  from_translation = dplyr::left_join(.x, org_hs_df, by = c("from" = "ENTREZID")) 
+  to_translation = dplyr::left_join(.x, org_hs_df, by = c("to" = "ENTREZID")) 
+  new_graph = data.frame(from = from_translation$SYMBOL, to = to_translation$SYMBOL)
+  new_graph
+}) %>%
+  unique()
+```
+
+### Get From Significant and KEA3
+
+Initially, we can grab the KEA3 nodes from both the kinases and their targets that match the peptide list from UKA.
+
+```{r symbol_kea3_kinases_targets}
+kea3_both = kea3_df %>%
+  dplyr::filter((to %in% uka_list) | (from %in% uka_list)) %>%
+  unique() %>%
+  unlist() %>%
+  unique()
+```
+
+Now let's filter to those in the KEGG list.
+
+```{r symbol_kea3_kegg}
+full_symbol_df_kea3_both = full_symbol_df %>%
+  dplyr::filter((to %in% kea3_both) | (from %in% kea3_both)) %>%
+  unique() %>%
+  tidygraph::as_tbl_graph()
+ggraph(full_symbol_df_kea3_both, "graphopt") +
+geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+                end_cap = circle(10, "mm")) +
+  geom_node_label(aes(label = name))
+```
+
+Aaannnddd, that's just nasty.
+There is no way we are learning or demonstrating anything from that monstrosity.
+
+### Significant Only
+
+What if we use only the genes from UKA to filter the graph on?
+
+```{r symbol_uka_kegg}
+full_symbol_df_uka_both = full_symbol_df %>%
+  dplyr::filter((to %in% uka_list) | (from %in% uka_list)) %>%
+  unique() %>%
+  tidygraph::as_tbl_graph()
+ggraph(full_symbol_df_uka_both, "graphopt") +
+geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+                end_cap = circle(10, "mm")) +
+  geom_node_label(aes(label = name))
+```
+
+So, this is better, but still not very interpretable.
+
+
+## Collapsed Graph
+
+**Part** of the problem seems to be genes that form large complexes.
+I actually spit out all the SYMBOLs in the graph in lexical order, and mapped them to **collapsed** SYMBOLs, where a **"*"** indicates that it has been collapsed from multiple things.
+
+```{r entrez_to_symbol}
+collapsed_symbol_df = purrr::map_df(kegg_graphs, function(.x){
+  from_translation = dplyr::left_join(.x, org_hs_df, by = c("from" = "ENTREZID")) %>%
+    dplyr::left_join(., specific_to_collapsed, by = c("SYMBOL" = "name"))
+  to_translation = dplyr::left_join(.x, org_hs_df, by = c("to" = "ENTREZID")) %>%
+    dplyr::left_join(., specific_to_collapsed, by = c("SYMBOL" = "name"))
+
+  new_graph = data.frame(from = from_translation$collapsed, to = to_translation$collapsed)
+  new_graph
+}) %>%
+  unique()
+
+nrow(collapsed_symbol_df) / nrow(full_symbol_df)
+```
+
+Cool, we have 1/4 the edges we started with overall.
+Ideally, this should help things.
+
+
+### KEA3 & Significant
+
+```{r kea3_collapsed}
+kea3_2_collapsed = dplyr::inner_join(data.frame(name = kea3_both),
+                                     specific_to_collapsed, by = "name") %>%
+  dplyr::pull(collapsed) %>%
+  unique()
+collapsed_symbol_df_kea3_both = collapsed_symbol_df %>%
+  dplyr::filter((to %in% kea3_2_collapsed) | (from %in% kea3_2_collapsed)) %>%
+  unique() %>%
+  tidygraph::as_tbl_graph()
+ggraph(collapsed_symbol_df_kea3_both, "graphopt") +
+geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+                end_cap = circle(10, "mm")) +
+  geom_node_label(aes(label = name))
+```
+
+Still **really** hard to interpret.
+
+### Significant Only
+
+```{r uka_collapsed}
+uka_2_collapsed = dplyr::inner_join(data.frame(name = uka_list),
+                                    specific_to_collapsed, by = "name") %>%
+  dplyr::pull(collapsed) %>%
+  unique()
+collapsed_symbol_df_uka = collapsed_symbol_df %>%
+  dplyr::filter((to %in% uka_2_collapsed) | (from %in% uka_2_collapsed)) %>%
+  unique() %>%
+  tidygraph::as_tbl_graph()
+ggraph(collapsed_symbol_df_uka, "graphopt") +
+geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+                end_cap = circle(10, "mm")) +
+  geom_node_label(aes(label = name))
+```
+
+This still looks really painful to make sense of.
+
+## Individual Pathways
+
+One thing we've not talked about, is what the individual pathways look like.
+
+```{r separate_graphs}
+separate_symbol_df = purrr::map(kegg_graphs, function(.x){
+  from_translation = dplyr::left_join(.x, org_hs_df, by = c("from" = "ENTREZID")) 
+  to_translation = dplyr::left_join(.x, org_hs_df, by = c("to" = "ENTREZID")) 
+  new_graph = data.frame(from = from_translation$SYMBOL, to = to_translation$SYMBOL)
+  unique(new_graph)
+})
+
+collapsed_separate_df = purrr::map(separate_symbol_df, function(.x){
+  from_translation = dplyr::left_join(.x, specific_to_collapsed, by = c("from" = "name"))
+  to_translation = dplyr::left_join(.x, specific_to_collapsed, by = c("to" = "name"))
+  new_graph = data.frame(from = from_translation$collapsed,
+                         to = to_translation$collapsed) %>%
+    unique()
+  new_graph
+})
+
+# how big are these things?
+purrr::map(separate_symbol_df, nrow)
+```
+
+Wow! Some of these are rather large, 2K and 3K for MAPK and PI3K, respectively.
+So maybe there is something to be gained by plotting them individually.
+
+### Full KEA3 & UKA
+
+```{r symbol_separate_kea3, fig.keep = 'all'}
+purrr::iwalk(separate_symbol_df, function(graph, id){
+  graph_uka = graph %>%
+  dplyr::filter((to %in% kea3_both) | (from %in% kea3_both)) %>%
+  unique() %>%
+  tidygraph::as_tbl_graph()
+print(ggraph(graph_uka, "graphopt") +
+geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+                end_cap = circle(10, "mm")) +
+  geom_node_label(aes(label = name)) +
+  labs(subtitle = id))
+})
+```
+
+### Full UKA Only
+
+```{r symbol_separate_uka, fig.keep = "all"}
+purrr::iwalk(separate_symbol_df, function(graph, id){
+  graph_uka = graph %>%
+  dplyr::filter((to %in% uka_list) | (from %in% uka_list)) %>%
+  unique() %>%
+  tidygraph::as_tbl_graph()
+print(ggraph(graph_uka, "graphopt") +
+geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+                end_cap = circle(10, "mm")) +
+  geom_node_label(aes(label = name)) +
+  labs(subtitle = id))
+})
+```
+
+### Collapsed KEA3 & UKA
+
+```{r collapsed_separate_kea3, fig.keep = "all"}
+purrr::iwalk(collapsed_separate_df, function(graph, id){
+  graph_kea3 = graph %>%
+  dplyr::filter((to %in% kea3_2_collapsed) | (from %in% kea3_2_collapsed)) %>%
+  unique() %>%
+  tidygraph::as_tbl_graph()
+print(ggraph(graph_kea3, "graphopt") +
+geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+                end_cap = circle(10, "mm")) +
+  geom_node_label(aes(label = name)) +
+  labs(subtitle = id))
+})
+```
+
+### Collapsed UKA Only
+
+```{r collapsed_separate_uka, fig.keep = "all"}
+purrr::iwalk(collapsed_separate_df, function(graph, id){
+  graph_uka = graph %>%
+  dplyr::filter((to %in% uka_2_collapsed) | (from %in% uka_2_collapsed)) %>%
+  unique() %>%
+  tidygraph::as_tbl_graph()
+print(ggraph(graph_uka, "graphopt") +
+geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+                end_cap = circle(10, "mm")) +
+  geom_node_label(aes(label = name)) +
+  labs(subtitle = id))
+})
+```
+
+
+## Common Nodes
+
+Instead of combining the **full** graphs, what if we combined them where at least one member of an edge had to be in more than **three** of the graphs?
+
+```{r common_nodes}
+all_nodes = data.frame(nodes = unique(unlist(full_symbol_df)), n_path = 0)
+
+for (ipath in separate_symbol_df) {
+  ipath_nodes = unique(unlist(ipath))
+  all_nodes[all_nodes$nodes %in% ipath_nodes, "n_path"] = all_nodes[all_nodes$nodes %in% ipath_nodes, "n_path"] + 1
+}
+
+multi_nodes = all_nodes %>%
+  dplyr::filter(n_path > 2)
+nrow(multi_nodes)
+```
+
+```{r filter_full_graph}
+multi_symbol_df = full_symbol_df %>%
+  dplyr::filter((from %in% multi_nodes$nodes) | (to %in% multi_nodes$nodes))
+```
+
+### KEA3 & UKA
+
+```{r multi_kea3uka}
+multi_kea3 = multi_symbol_df %>%
+  dplyr::filter((from %in% kea3_both) | (to %in% kea3_both)) %>%
+  unique() %>%
+  tidygraph::as_tbl_graph()
+ggraph(multi_kea3, "graphopt") +
+geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+                end_cap = circle(10, "mm")) +
+  geom_node_label(aes(label = name))
+```
+
+### UKA Only
+
+```{r multi_uka}
+multi_uka = multi_symbol_df %>%
+  dplyr::filter((from %in% uka_list) | (to %in% uka_list)) %>%
+  unique() %>%
+  tidygraph::as_tbl_graph()
+ggraph(multi_uka, "graphopt") +
+geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+                end_cap = circle(10, "mm")) +
+  geom_node_label(aes(label = name))
+```
+
+## Common Nodes Collapsed
+
+And now we try collapsing them again, because the graphs are still really, really big and hard to interpret.
+
+```{r multi_collapsed}
+multi_collapsed_df = data.frame(from = 
+    dplyr::left_join(multi_symbol_df, specific_to_collapsed, by = c("from" = "name")) %>% dplyr::pull(collapsed),
+    to = dplyr::left_join(multi_symbol_df, specific_to_collapsed, by = c("to" = "name")) %>% dplyr::pull(collapsed)) %>%
+  unique()
+```
+
+### KEA3 & UKA
+
+```{r multi_collapsed_kea3}
+multi_collapsed_kea3 = multi_collapsed_df %>%
+  dplyr::filter((from %in% kea3_2_collapsed) | (to %in% kea3_2_collapsed)) %>%
+  unique() %>%
+  tidygraph::as_tbl_graph()
+ggraph(multi_collapsed_kea3, "graphopt") +
+geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+                end_cap = circle(10, "mm")) +
+  geom_node_label(aes(label = name))
+```
+
+### UKA 
+
+```{r multi_collapsed_uka}
+multi_collapsed_uka = multi_collapsed_df %>%
+  dplyr::filter((from %in% uka_2_collapsed) | (to %in% uka_2_collapsed)) %>%
+  unique() %>%
+  tidygraph::as_tbl_graph()
+set.seed(1234)
+ggraph(multi_collapsed_uka, "graphopt") +
+geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+                end_cap = circle(10, "mm")) +
+  geom_node_label(aes(label = name))
+```
+
+OK, now this finally looks **almost** interpretable.
+If we can break off that group on the left and plot it separately, we could probably make even more sense of it.
+
+Let's see where the UKA peptides are within this network.
+
+## Final Pathway
+
+```{r add_uka_genes}
+diff_colors = c("FALSE" = "#BFBFBF", "TRUE" = "#00B050")
+multi_collapsed_uka = multi_collapsed_uka %>%
+  activate(nodes) %>%
+  dplyr::mutate(differential = name %in% uka_2_collapsed)
+set.seed(1234)
+out_graph = ggraph(multi_collapsed_uka, "graphopt") +
+geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+                end_cap = circle(10, "mm")) +
+  geom_node_label(aes(label = name, fill = differential)) +
+  scale_fill_manual(values = diff_colors) +
+  theme(legend.position = c(0.15, 0.9))
+out_graph
+```
+
+```{r export_pathway}
+plot_list = list(collapsed_uka = out_graph)
+export_plots(plot_list, "rmflight_reports/kegg_pathway_plot_2021-11-09.pptx")
+```
+
+Figure X. Combined KEGG pathways from MAPK, PI3K, RAS and EGFR. 
+Gene nodes were kept if they formed edges with genes in at least three of the four pathways and genes that were noted as differential peptides from human and mouse.
+Genes from complexes or where multiple genes have very similar symbols were collapsed to single entries, noted with an asterisk (*).
+Genes from the differential peptides list are blue.
+
+## Methods
+
+Downloaded KEGG KGML files for each pathway (MAPK, PI3K, RAS and EGFR) using KEGGREST [@tenenbaumKEGGRESTClientsideREST2021] and extracted all gene product - gene product edges from the pathway using KEGGgraph [@zhangKEGGgraphGraphApproach2009; @zhangKEGGgraph2021; @zhangKEGGgraphApplicationExamples2021a].
+Converted Entrez identifiers for each node to Symbols using org.Hs.eg.db.
+To deal with the many subunits for some protein complexes, collapsed or group identifier was created by hand where possible to reduce the number of edges and nodes.
+A count of how many of the pathways a gene product was present in was generated, and a subset of "core" gene products that are present in at least three of the four pathways kept.
+Those gene products that form an edge with the core ones were also kept as an initial network, discarding all others.
+Finally, from that network, the differential gene products and their partners were extracted and plotted.
+
+## References
