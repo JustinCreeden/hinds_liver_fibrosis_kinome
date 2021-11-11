@@ -1,0 +1,96 @@
+---
+title: "P-Value Adjustment"
+author: "Robert M Flight"
+output:
+  word_document: default
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+bibliography: '`r here::here("rmflight_reports", "Hinds_Kinome_references.json")`'
+---
+
+
+## Purpose
+
+To adjust the raw p-values from the PCR results.
+
+## Data
+
+Human and mouse PCR p-values.
+
+```{r setup}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+```{r packages}
+library(dplyr)
+source(here::here("rmflight_reports", "kea3_functions.R"))
+```
+
+
+```{r get_data}
+pvalues = readxl::read_excel(here::here("rmflight_reports", "Liver-Kinome_RTPCR-mRNA and p-values_11-7-21.xlsx"))
+
+human_cols = c(2, 3)
+mouse_cols = c(6, 7)
+```
+
+```{r adjust_them}
+get_and_adjust = function(full_data, use_cols){
+  #full_data = pvalues
+  #use_cols = human_cols
+  org_data = as.data.frame(full_data[3:nrow(full_data), use_cols])
+  names(org_data) = c("Gene Name", "p-value")
+  org_data = org_data %>%
+    dplyr::filter(!is.na(`Gene Name`)) %>%
+    unique()
+  numeric_data = org_data %>%
+    dplyr::mutate(`p-value` = dplyr::case_when(
+      grepl("<0.0001", `p-value`) ~ as.numeric("0.0001"),
+      TRUE ~ as.numeric(`p-value`)
+    )) %>%
+    dplyr::mutate(`adjusted-p-value` = stats::p.adjust(`p-value`, method = "BH")) %>%
+    dplyr::mutate(`adjusted-p-value` = format(`adjusted-p-value`, nsmall = 4, digits = 1))
+  numeric_data
+}
+
+human_adjusted = get_and_adjust(pvalues, human_cols)
+mouse_adjusted = get_and_adjust(pvalues, mouse_cols)
+```
+
+And now put the adjusted p-values back into the table.
+
+```{r put_back}
+pvalues_human = pvalues[, c(1, 2, 3)]
+pvalues_mouse = pvalues[, c(5, 6, 7)]
+add_adjusted = function(org_data, adjusted_data, new_name = NULL){
+  #org_data = pvalues_human
+  #adjusted_data = human_adjusted
+  
+  new_data = org_data
+  new_data[[new_name]] = character(nrow(new_data))
+  gene_loc = which(grepl("Gene Name", new_data[1, ]))
+  for (irow in seq_len(nrow(adjusted_data))) {
+    match_loc = grepl(adjusted_data$`Gene Name`[irow], new_data[[gene_loc]])
+    new_data[[4]][match_loc] = adjusted_data$`adjusted-p-value`[irow]
+  }
+  new_data[[4]][1] = "adjusted-p-value"
+  new_data
+}
+
+adjusted_data_human = add_adjusted(pvalues_human, human_adjusted, "...4")
+adjusted_data_mouse = add_adjusted(pvalues_mouse, mouse_adjusted, "...8")
+
+all_adjusted = cbind(adjusted_data_human, data.frame(...5 = character(nrow(pvalues))), adjusted_data_mouse)
+```
+
+```{r write_out}
+openxlsx::write.xlsx(all_adjusted, file = here::here("rmflight_reports", "Liver-Kinome_RTPCR-mRNA and p-values_11-7-21_adjusted.xlsx"), overwrite = TRUE)
+```
+
+## Methods
+
+Raw PCR p-values were adjusted for each organism separately, using the Benjamini-Hochberg method [@benjaminiControllingFalseDiscovery1995] in R [@rcoreteamLanguageEnvironmentStatistical2021].

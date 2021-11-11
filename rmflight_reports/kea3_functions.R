@@ -323,6 +323,17 @@ annotate_full_network = function(full_network, network_1, network_2,
   
 }
 
+subset_kegg_network = function(full_network, subset_nodes){
+  node_df = full_network %>%
+    activate(nodes) %>%
+    data.frame()
+  edge_df = full_network %>%
+    activate(edges) %>%
+    data.frame()
+  edge_named_df = data.frame(from = node_df$name[edge_df$from],
+                             to = node_df$name[edge_df$to])
+}
+
 subset_network_alpha = function(full_network, subset_results, keep_network = c("both", "human"), exclude_alpha = 0){
   # for testing the function and iterating through it
   #full_network = all_results_source

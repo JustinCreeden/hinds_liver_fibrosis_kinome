@@ -72,7 +72,7 @@ This data will be used to limit results to genes that are known to be expressed 
 
 ### Enrichment
 
-For each gene list, we queried KEA3 using the publicly accessible API and stored results as simple lists in R.
+For each gene list, we queried KEA3 [@] using the publicly accessible API and stored results as simple lists in R.
 **Enriched** kinases are those in the **top 10** kinases by MeanRank score.
 For each of the enriched kinases, we also extracted the genes from the input list that overlap with the kinase annotation.
 

@@ -378,19 +378,59 @@ diff_colors = c("FALSE" = "#BFBFBF", "TRUE" = "#00B050")
 multi_collapsed_uka = multi_collapsed_uka %>%
   activate(nodes) %>%
   dplyr::mutate(differential = name %in% uka_2_collapsed)
+```
+
+```{r create_layout_communities}
 set.seed(1234)
-out_graph = ggraph(multi_collapsed_uka, "graphopt") +
-geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
+mcu_layout = create_layout(multi_collapsed_uka, "graphopt")
+
+walk_membership = igraph::cluster_walktrap(multi_collapsed_uka)
+walk_communities = igraph::membership(walk_membership)
+split_comms = split(names(walk_communities), walk_communities)
+names(split_comms) = NULL
+
+which_comm = split_comms[[which(purrr::map_lgl(split_comms, ~ "ERBB*" %in% .x))]]
+
+erbb_layout = mcu_layout %>%
+  dplyr::filter(name %in% which_comm)
+erbb_xlim = range(erbb_layout$x)
+erbb_ylim = range(erbb_layout$y)
+```
+
+```{r plot_full}
+full_graph = ggraph(mcu_layout) +
+  geom_edge_link(arrow = arrow(length = unit(2, 'mm')),
                 end_cap = circle(10, "mm")) +
   geom_node_label(aes(label = name, fill = differential)) +
   scale_fill_manual(values = diff_colors) +
   theme(legend.position = c(0.15, 0.9))
-out_graph
+full_graph
 ```
 
+```{r plot_erbb}
+erbb_graph = full_graph +
+  coord_cartesian(xlim = erbb_xlim, ylim = erbb_ylim) +
+  theme(legend.position = "none")
+erbb_graph
+```
+
+```{r communities}
+knitr::kable(purrr::map_df(split_comms, function(in_comm){
+  purrr::imap_dfc(collapsed_separate_df, function(in_path, path_id){
+    all_path = unique(unlist(in_path))
+    tmp = data.frame(perc = sum(in_comm %in% all_path) / length(in_comm))
+    names(tmp) = path_id
+    tmp
+  })
+}), digits = 2)
+```
+
+I don't think we have exact pathways, unfortunately.
+
 ```{r export_pathway}
-plot_list = list(collapsed_uka = out_graph)
-export_plots(plot_list, "rmflight_reports/kegg_pathway_plot_2021-11-09.pptx")
+plot_list = list(collapsed_uka = full_graph,
+                 sub_uka = erbb_graph)
+export_plots(plot_list, "rmflight_reports/kegg_pathway_plot_2021-11-10.pptx")
 ```
 
 Figure X. Combined KEGG pathways from MAPK, PI3K, RAS and EGFR. 
