@@ -1,5 +1,0 @@
-"0","#load data"
-"0","jfc_individual_kinase_comparison_data <- read.delim(""input/individual-kinases.txt"")"
-"0","jfc_family_kinase_comparisone_data <- read.delim(""input/reformatted-both-liver-fibrosis-vs-control.txt"")"
-"0",""
-"0",""

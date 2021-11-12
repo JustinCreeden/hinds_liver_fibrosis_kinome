@@ -1,1 +1,0 @@
-"0","png(file = (paste0(getwd(),""/"",Sys.Date(),"" - "",""labeled_plot_individual_kinase_human_mouse_correlation"","".png"")),width = 20000,height = 10000,units = ""px"",pointsize = 12,res = 1200)"
