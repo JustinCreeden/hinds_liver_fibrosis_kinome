@@ -1,0 +1,680 @@
+TY  - COMP
+TI  - ICIKendallTau
+AU  - Flight, Robert M
+AU  - Moseley, Hunter NB
+AB  - Information-Content-Informed Kendall-tau in R
+DA  - 2021/10/28/
+PY  - 2021
+DP  - GitHub
+ET  - 0.1.8
+LA  - C++
+UR  - https://github.com/MoseleyBioinformaticsLab/ICIKendallTau
+Y2  - 2021/11/03/13:56:24
+ER  - 
+
+TY  - COMP
+TI  - categoryCompare2
+AU  - Flight, Robert M.
+AB  - Enables Gene Ontology (and other feature annotation) enrichment calculations and comparisons between feature sets.
+DA  - 2021/04/14/
+PY  - 2021
+DP  - GitHub
+ET  - 0.99.158
+LA  - R
+UR  - https://github.com/rmflight/categoryCompare2
+Y2  - 2021/11/03/13:57:20
+KW  - bioconductor
+KW  - bioinformatics
+KW  - gene-annotation
+KW  - gene-expression
+KW  - gene-sets
+KW  - r
+KW  - rstats
+ER  - 
+
+TY  - JOUR
+TI  - KEA3: improved kinase enrichment analysis via data integration
+AU  - Kuleshov, Maxim V
+AU  - Xie, Zhuorui
+AU  - London, Alexandra B K
+AU  - Yang, Janice
+AU  - Evangelista, John Erol
+AU  - Lachmann, Alexander
+AU  - Shu, Ingrid
+AU  - Torre, Denis
+AU  - Ma’ayan, Avi
+T2  - Nucleic Acids Research
+AB  - Phosphoproteomics and proteomics experiments capture a global snapshot of the cellular signaling network, but these methods do not directly measure kinase state. Kinase Enrichment Analysis 3 (KEA3) is a webserver application that infers overrepresentation of upstream kinases whose putative substrates are in a user-inputted list of proteins. KEA3 can be applied to analyze data from phosphoproteomics and proteomics studies to predict the upstream kinases responsible for observed differential phosphorylations. The KEA3 background database contains measured and predicted kinase-substrate interactions (KSI), kinase-protein interactions (KPI), and interactions supported by co-expression and co-occurrence data. To benchmark the performance of KEA3, we examined whether KEA3 can predict the perturbed kinase from single-kinase perturbation followed by gene expression experiments, and phosphoproteomics data collected from kinase-targeting small molecules. We show that integrating KSIs and KPIs across data sources to produce a composite ranking improves the recovery of the expected kinase. The KEA3 webserver is available at https://maayanlab.cloud/kea3.
+DA  - 2021/07/02/
+PY  - 2021
+DO  - 10.1093/nar/gkab359
+DP  - Silverchair
+VL  - 49
+IS  - W1
+SP  - W304
+EP  - W316
+J2  - Nucleic Acids Research
+SN  - 0305-1048
+ST  - KEA3
+UR  - https://doi.org/10.1093/nar/gkab359
+Y2  - 2021/11/03/13:58:10
+L1  - https://academic.oup.com/nar/article-pdf/49/W1/W304/38842187/gkab359.pdf
+L2  - https://academic.oup.com/nar/article/49/W1/W304/6279841
+ER  - 
+
+TY  - JOUR
+TI  - Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing
+AU  - Benjamini, Yoav
+AU  - Hochberg, Yosef
+T2  - Journal of the Royal Statistical Society. Series B (Methodological)
+AB  - The common approach to the multiplicity problem calls for controlling the familywise error rate (FWER). This approach, though, has faults, and we point out a few. A different approach to problems of multiple significance testing is presented. It calls for controlling the expected proportion of falsely rejected hypotheses-the false discovery rate. This error rate is equivalent to the FWER when all hypotheses are true but is smaller otherwise. Therefore, in problems where the control of the false discovery rate rather than that of the FWER is desired, there is potential for a gain in power. A simple sequential Bonferroni-type procedure is proved to control the false discovery rate for independent test statistics, and a simulation study shows that the gain in power is substantial. The use of the new procedure and the appropriateness of the criterion are illustrated with examples.
+DA  - 1995///
+PY  - 1995
+DP  - JSTOR
+VL  - 57
+IS  - 1
+SP  - 289
+EP  - 300
+SN  - 0035-9246
+ST  - Controlling the False Discovery Rate
+UR  - https://www.jstor.org/stable/2346101
+Y2  - 2021/11/03/13:59:33
+ER  - 
+
+TY  - JOUR
+TI  - categoryCompare, an analytical tool based on feature annotations
+AU  - Flight, Robert M.
+AU  - Harrison, Benjamin J.
+AU  - Mohammad, Fahim
+AU  - Bunge, Mary B.
+AU  - Moon, Lawrence D. F.
+AU  - Petruska, Jeffrey C.
+AU  - Rouchka, Eric C.
+T2  - Frontiers in Genetics
+AB  - Assessment of high-throughput-omics data initially focuses on relative or raw levels of a particular feature, such as an expression value for a transcript, protein, or metabolite. At a second level, analyses of annotations including known or predicted functions and associations of each individual feature, attempt to distill biological context. Most currently available comparative- and meta-analyses methods are dependent on the availability of identical features across data sets, and concentrate on determining features that are differentially expressed across experiments, some of which may be considered "biomarkers." The heterogeneity of measurement platforms and inherent variability of biological systems confounds the search for robust biomarkers indicative of a particular condition. In many instances, however, multiple data sets show involvement of common biological processes or signaling pathways, even though individual features are not commonly measured or differentially expressed between them. We developed a methodology, categoryCompare, for cross-platform and cross-sample comparison of high-throughput data at the annotation level. We assessed the utility of the approach using hypothetical data, as well as determining similarities and differences in the set of processes in two instances: (1) denervated skin vs. denervated muscle, and (2) colon from Crohn's disease vs. colon from ulcerative colitis (UC). The hypothetical data showed that in many cases comparing annotations gave superior results to comparing only at the gene level. Improved analytical results depended as well on the number of genes included in the annotation term, the amount of noise in relation to the number of genes expressing in unenriched annotation categories, and the specific method in which samples are combined. In the skin vs. muscle denervation comparison, the tissues demonstrated markedly different responses. The Crohn's vs. UC comparison showed gross similarities in inflammatory response in the two diseases, with particular processes specific to each disease.
+DA  - 2014///
+PY  - 2014
+DO  - 10.3389/fgene.2014.00098
+DP  - PubMed
+VL  - 5
+SP  - 98
+J2  - Front Genet
+LA  - eng
+SN  - 1664-8021
+L1  - https://www.frontiersin.org/articles/10.3389/fgene.2014.00098/pdf
+L2  - http://www.ncbi.nlm.nih.gov/pubmed/24808906
+KW  - comparative analysis
+KW  - meta-analysis
+KW  - metabolomics
+KW  - proteomics
+KW  - transcriptomics
+ER  - 
+
+TY  - JOUR
+TI  - KEGG: kyoto encyclopedia of genes and genomes
+AU  - Kanehisa, M.
+AU  - Goto, S.
+T2  - Nucleic Acids Research
+AB  - KEGG (Kyoto Encyclopedia of Genes and Genomes) is a knowledge base for systematic analysis of gene functions, linking genomic information with higher order functional information. The genomic information is stored in the GENES database, which is a collection of gene catalogs for all the completely sequenced genomes and some partial genomes with up-to-date annotation of gene functions. The higher order functional information is stored in the PATHWAY database, which contains graphical representations of cellular processes, such as metabolism, membrane transport, signal transduction and cell cycle. The PATHWAY database is supplemented by a set of ortholog group tables for the information about conserved subpathways (pathway motifs), which are often encoded by positionally coupled genes on the chromosome and which are especially useful in predicting gene functions. A third database in KEGG is LIGAND for the information about chemical compounds, enzyme molecules and enzymatic reactions. KEGG provides Java graphics tools for browsing genome maps, comparing two genome maps and manipulating expression maps, as well as computational tools for sequence comparison, graph comparison and path computation. The KEGG databases are daily updated and made freely available (http://www. genome.ad.jp/kegg/).
+DA  - 2000/01/01/
+PY  - 2000
+DO  - 10.1093/nar/28.1.27
+DP  - PubMed
+VL  - 28
+IS  - 1
+SP  - 27
+EP  - 30
+J2  - Nucleic Acids Res
+LA  - eng
+SN  - 0305-1048
+ST  - KEGG
+L1  - https://academic.oup.com/nar/article-pdf/28/1/27/9895154/280027.pdf
+L2  - http://www.ncbi.nlm.nih.gov/pubmed/10592173
+KW  - Animals
+KW  - Databases, Factual
+KW  - Gene Expression
+KW  - Genome
+KW  - Humans
+KW  - Information Storage and Retrieval
+KW  - Japan
+KW  - Proteins
+ER  - 
+
+TY  - JOUR
+TI  - Toward understanding the origin and evolution of cellular organisms
+AU  - Kanehisa, Minoru
+T2  - Protein Science: A Publication of the Protein Society
+AB  - In this era of high-throughput biology, bioinformatics has become a major discipline for making sense out of large-scale datasets. Bioinformatics is usually considered as a practical field developing databases and software tools for supporting other fields, rather than a fundamental scientific discipline for uncovering principles of biology. The KEGG resource that we have been developing is a reference knowledge base for biological interpretation of genome sequences and other high-throughput data. It is now one of the most utilized biological databases because of its practical values. For me personally, KEGG is a step toward understanding the origin and evolution of cellular organisms.
+DA  - 2019/11//
+PY  - 2019
+DO  - 10.1002/pro.3715
+DP  - PubMed
+VL  - 28
+IS  - 11
+SP  - 1947
+EP  - 1951
+J2  - Protein Sci
+LA  - eng
+SN  - 1469-896X
+L1  - https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/pro.3715
+L2  - http://www.ncbi.nlm.nih.gov/pubmed/31441146
+KW  - Computational Biology
+KW  - Databases, Genetic
+KW  - High-Throughput Screening Assays
+KW  - Humans
+KW  - KEGG
+KW  - KEGG MEDICUS
+KW  - KEGG module
+KW  - pathway mapping
+KW  - reaction module
+KW  - Software
+ER  - 
+
+TY  - JOUR
+TI  - KEGG: integrating viruses and cellular organisms
+AU  - Kanehisa, Minoru
+AU  - Furumichi, Miho
+AU  - Sato, Yoko
+AU  - Ishiguro-Watanabe, Mari
+AU  - Tanabe, Mao
+T2  - Nucleic Acids Research
+AB  - KEGG (https://www.kegg.jp/) is a manually curated resource integrating eighteen databases categorized into systems, genomic, chemical and health information. It also provides KEGG mapping tools, which enable understanding of cellular and organism-level functions from genome sequences and other molecular datasets. KEGG mapping is a predictive method of reconstructing molecular network systems from molecular building blocks based on the concept of functional orthologs. Since the introduction of the KEGG NETWORK database, various diseases have been associated with network variants, which are perturbed molecular networks caused by human gene variants, viruses, other pathogens and environmental factors. The network variation maps are created as aligned sets of related networks showing, for example, how different viruses inhibit or activate specific cellular signaling pathways. The KEGG pathway maps are now integrated with network variation maps in the NETWORK database, as well as with conserved functional units of KEGG modules and reaction modules in the MODULE database. The KO database for functional orthologs continues to be improved and virus KOs are being expanded for better understanding of virus-cell interactions and for enabling prediction of viral perturbations.
+DA  - 2021/01/08/
+PY  - 2021
+DO  - 10.1093/nar/gkaa970
+DP  - PubMed
+VL  - 49
+IS  - D1
+SP  - D545
+EP  - D551
+J2  - Nucleic Acids Res
+LA  - eng
+SN  - 1362-4962
+ST  - KEGG
+L1  - https://academic.oup.com/nar/article-pdf/49/D1/D545/35363888/gkaa970.pdf
+L2  - http://www.ncbi.nlm.nih.gov/pubmed/33125081
+KW  - Apoptosis
+KW  - Cells
+KW  - Gene Regulatory Networks
+KW  - Genome
+KW  - Humans
+KW  - Metabolic Networks and Pathways
+KW  - Molecular Sequence Annotation
+KW  - Viruses
+ER  - 
+
+TY  - JOUR
+TI  - The reactome pathway knowledgebase
+AU  - Jassal, Bijay
+AU  - Matthews, Lisa
+AU  - Viteri, Guilherme
+AU  - Gong, Chuqiao
+AU  - Lorente, Pascual
+AU  - Fabregat, Antonio
+AU  - Sidiropoulos, Konstantinos
+AU  - Cook, Justin
+AU  - Gillespie, Marc
+AU  - Haw, Robin
+AU  - Loney, Fred
+AU  - May, Bruce
+AU  - Milacic, Marija
+AU  - Rothfels, Karen
+AU  - Sevilla, Cristoffer
+AU  - Shamovsky, Veronica
+AU  - Shorser, Solomon
+AU  - Varusai, Thawfeek
+AU  - Weiser, Joel
+AU  - Wu, Guanming
+AU  - Stein, Lincoln
+AU  - Hermjakob, Henning
+AU  - D'Eustachio, Peter
+T2  - Nucleic Acids Research
+AB  - The Reactome Knowledgebase (https://reactome.org) provides molecular details of signal transduction, transport, DNA replication, metabolism and other cellular processes as an ordered network of molecular transformations in a single consistent data model, an extended version of a classic metabolic map. Reactome functions both as an archive of biological processes and as a tool for discovering functional relationships in data such as gene expression profiles or somatic mutation catalogs from tumor cells. To extend our ability to annotate human disease processes, we have implemented a new drug class and have used it initially to annotate drugs relevant to cardiovascular disease. Our annotation model depends on external domain experts to identify new areas for annotation and to review new content. New web pages facilitate recruitment of community experts and allow those who have contributed to Reactome to identify their contributions and link them to their ORCID records. To improve visualization of our content, we have implemented a new tool to automatically lay out the components of individual reactions with multiple options for downloading the reaction diagrams and associated data, and a new display of our event hierarchy that will facilitate visual interpretation of pathway analysis results.
+DA  - 2020/01/08/
+PY  - 2020
+DO  - 10.1093/nar/gkz1031
+DP  - PubMed
+VL  - 48
+IS  - D1
+SP  - D498
+EP  - D503
+J2  - Nucleic Acids Res
+LA  - eng
+SN  - 1362-4962
+L1  - https://academic.oup.com/nar/article-pdf/48/D1/D498/31697544/gkz1031.pdf
+L2  - http://www.ncbi.nlm.nih.gov/pubmed/31691815
+KW  - Databases, Chemical
+KW  - Databases, Pharmaceutical
+KW  - Genome, Human
+KW  - Humans
+KW  - Knowledge Bases
+KW  - Metabolic Networks and Pathways
+KW  - Protein Interaction Maps
+KW  - Signal Transduction
+KW  - Software
+ER  - 
+
+TY  - COMP
+TI  - reactome.db: A set of annotation maps for reactome
+AU  - Ligtenberg, Willem
+DA  - 2021///
+PY  - 2021
+ET  - 1.77.0
+N1  - R package version 1.77.0
+ER  - 
+
+TY  - COMP
+TI  - org.Hs.eg.db: Genome wide annotation for Human
+AU  - Carlson, Marc
+DA  - 2021///
+PY  - 2021
+ET  - 3.14.0
+N1  - R package version 3.14.0
+ER  - 
+
+TY  - COMP
+TI  - KEGGREST: Client-side REST access to the kyoto encyclopedia of genes and genomes (KEGG)
+AU  - Tenenbaum, Dan
+AU  - Maintainer, Bioconductor Package
+DA  - 2021///
+PY  - 2021
+ET  - 1.34.0
+N1  - R package version 1.34.0
+ER  - 
+
+TY  - COMP
+TI  - GO.db: A set of annotation maps describing the entire Gene Ontology
+AU  - Carlson, Marc
+DA  - 2021///
+PY  - 2021
+ET  - 3.14.0
+N1  - R package version 3.14.0
+ER  - 
+
+TY  - JOUR
+TI  - Gene Ontology: tool for the unification of biology
+AU  - Ashburner, Michael
+AU  - Ball, Catherine A.
+AU  - Blake, Judith A.
+AU  - Botstein, David
+AU  - Butler, Heather
+AU  - Cherry, J. Michael
+AU  - Davis, Allan P.
+AU  - Dolinski, Kara
+AU  - Dwight, Selina S.
+AU  - Eppig, Janan T.
+AU  - Harris, Midori A.
+AU  - Hill, David P.
+AU  - Issel-Tarver, Laurie
+AU  - Kasarskis, Andrew
+AU  - Lewis, Suzanna
+AU  - Matese, John C.
+AU  - Richardson, Joel E.
+AU  - Ringwald, Martin
+AU  - Rubin, Gerald M.
+AU  - Sherlock, Gavin
+T2  - Nature genetics
+AB  - Genomic sequencing has made it clear that a large fraction of the genes specifying the core biological functions are shared by all eukaryotes. Knowledge of the biological role of such shared proteins in one organism can often be transferred to other organisms. The goal of the Gene Ontology Consortium is to produce a dynamic, controlled vocabulary that can be applied to all eukaryotes even as knowledge of gene and protein roles in cells is accumulating and changing. To this end, three independent ontologies accessible on the World-Wide Web (http://www.geneontology.org) are being constructed: biological process, molecular function and cellular component.
+DA  - 2000/05//
+PY  - 2000
+DO  - 10.1038/75556
+DP  - PubMed Central
+VL  - 25
+IS  - 1
+SP  - 25
+EP  - 29
+J2  - Nat Genet
+SN  - 1061-4036
+ST  - Gene Ontology
+UR  - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3037419/
+Y2  - 2021/11/03/14:27:49
+L1  - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3037419/pdf/nihms-269796.pdf
+L2  - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3037419/
+ER  - 
+
+TY  - JOUR
+TI  - The Gene Ontology resource: enriching a GOld mine
+AU  - The Gene Ontology Consortium
+AU  - Carbon, Seth
+AU  - Douglass, Eric
+AU  - Good, Benjamin M
+AU  - Unni, Deepak R
+AU  - Harris, Nomi L
+AU  - Mungall, Christopher J
+AU  - Basu, Siddartha
+AU  - Chisholm, Rex L
+AU  - Dodson, Robert J
+AU  - Hartline, Eric
+AU  - Fey, Petra
+AU  - Thomas, Paul D
+AU  - Albou, Laurent-Philippe
+AU  - Ebert, Dustin
+AU  - Kesling, Michael J
+AU  - Mi, Huaiyu
+AU  - Muruganujan, Anushya
+AU  - Huang, Xiaosong
+AU  - Mushayahama, Tremayne
+AU  - LaBonte, Sandra A
+AU  - Siegele, Deborah A
+AU  - Antonazzo, Giulia
+AU  - Attrill, Helen
+AU  - Brown, Nick H
+AU  - Garapati, Phani
+AU  - Marygold, Steven J
+AU  - Trovisco, Vitor
+AU  - dos Santos, Gil
+AU  - Falls, Kathleen
+AU  - Tabone, Christopher
+AU  - Zhou, Pinglei
+AU  - Goodman, Joshua L
+AU  - Strelets, Victor B
+AU  - Thurmond, Jim
+AU  - Garmiri, Penelope
+AU  - Ishtiaq, Rizwan
+AU  - Rodríguez-López, Milagros
+AU  - Acencio, Marcio L
+AU  - Kuiper, Martin
+AU  - Lægreid, Astrid
+AU  - Logie, Colin
+AU  - Lovering, Ruth C
+AU  - Kramarz, Barbara
+AU  - Saverimuttu, Shirin C C
+AU  - Pinheiro, Sandra M
+AU  - Gunn, Heather
+AU  - Su, Renzhi
+AU  - Thurlow, Katherine E
+AU  - Chibucos, Marcus
+AU  - Giglio, Michelle
+AU  - Nadendla, Suvarna
+AU  - Munro, James
+AU  - Jackson, Rebecca
+AU  - Duesbury, Margaret J
+AU  - Del-Toro, Noemi
+AU  - Meldal, Birgit H M
+AU  - Paneerselvam, Kalpana
+AU  - Perfetto, Livia
+AU  - Porras, Pablo
+AU  - Orchard, Sandra
+AU  - Shrivastava, Anjali
+AU  - Chang, Hsin-Yu
+AU  - Finn, Robert Daniel
+AU  - Mitchell, Alexander Lawson
+AU  - Rawlings, Neil David
+AU  - Richardson, Lorna
+AU  - Sangrador-Vegas, Amaia
+AU  - Blake, Judith A
+AU  - Christie, Karen R
+AU  - Dolan, Mary E
+AU  - Drabkin, Harold J
+AU  - Hill, David P
+AU  - Ni, Li
+AU  - Sitnikov, Dmitry M
+AU  - Harris, Midori A
+AU  - Oliver, Stephen G
+AU  - Rutherford, Kim
+AU  - Wood, Valerie
+AU  - Hayles, Jaqueline
+AU  - Bähler, Jürg
+AU  - Bolton, Elizabeth R
+AU  - De Pons, Jeffery L
+AU  - Dwinell, Melinda R
+AU  - Hayman, G Thomas
+AU  - Kaldunski, Mary L
+AU  - Kwitek, Anne E
+AU  - Laulederkind, Stanley J F
+AU  - Plasterer, Cody
+AU  - Tutaj, Marek A
+AU  - Vedi, Mahima
+AU  - Wang, Shur-Jen
+AU  - D’Eustachio, Peter
+AU  - Matthews, Lisa
+AU  - Balhoff, James P
+AU  - Aleksander, Suzi A
+AU  - Alexander, Michael J
+AU  - Cherry, J Michael
+AU  - Engel, Stacia R
+AU  - Gondwe, Felix
+AU  - Karra, Kalpana
+AU  - Miyasato, Stuart R
+AU  - Nash, Robert S
+AU  - Simison, Matt
+AU  - Skrzypek, Marek S
+AU  - Weng, Shuai
+AU  - Wong, Edith D
+AU  - Feuermann, Marc
+AU  - Gaudet, Pascale
+AU  - Morgat, Anne
+AU  - Bakker, Erica
+AU  - Berardini, Tanya Z
+AU  - Reiser, Leonore
+AU  - Subramaniam, Shabari
+AU  - Huala, Eva
+AU  - Arighi, Cecilia N
+AU  - Auchincloss, Andrea
+AU  - Axelsen, Kristian
+AU  - Argoud-Puy, Ghislaine
+AU  - Bateman, Alex
+AU  - Blatter, Marie-Claude
+AU  - Boutet, Emmanuel
+AU  - Bowler, Emily
+AU  - Breuza, Lionel
+AU  - Bridge, Alan
+AU  - Britto, Ramona
+AU  - Bye-A-Jee, Hema
+AU  - Casas, Cristina Casals
+AU  - Coudert, Elisabeth
+AU  - Denny, Paul
+AU  - Estreicher, Anne
+AU  - Famiglietti, Maria Livia
+AU  - Georghiou, George
+AU  - Gos, Arnaud
+AU  - Gruaz-Gumowski, Nadine
+AU  - Hatton-Ellis, Emma
+AU  - Hulo, Chantal
+AU  - Ignatchenko, Alexandr
+AU  - Jungo, Florence
+AU  - Laiho, Kati
+AU  - Le Mercier, Philippe
+AU  - Lieberherr, Damien
+AU  - Lock, Antonia
+AU  - Lussi, Yvonne
+AU  - MacDougall, Alistair
+AU  - Magrane, Michele
+AU  - Martin, Maria J
+AU  - Masson, Patrick
+AU  - Natale, Darren A
+AU  - Hyka-Nouspikel, Nevila
+AU  - Orchard, Sandra
+AU  - Pedruzzi, Ivo
+AU  - Pourcel, Lucille
+AU  - Poux, Sylvain
+AU  - Pundir, Sangya
+AU  - Rivoire, Catherine
+AU  - Speretta, Elena
+AU  - Sundaram, Shyamala
+AU  - Tyagi, Nidhi
+AU  - Warner, Kate
+AU  - Zaru, Rossana
+AU  - Wu, Cathy H
+AU  - Diehl, Alexander D
+AU  - Chan, Juancarlos N
+AU  - Grove, Christian
+AU  - Lee, Raymond Y N
+AU  - Muller, Hans-Michael
+AU  - Raciti, Daniela
+AU  - Van Auken, Kimberly
+AU  - Sternberg, Paul W
+AU  - Berriman, Matthew
+AU  - Paulini, Michael
+AU  - Howe, Kevin
+AU  - Gao, Sibyl
+AU  - Wright, Adam
+AU  - Stein, Lincoln
+AU  - Howe, Douglas G
+AU  - Toro, Sabrina
+AU  - Westerfield, Monte
+AU  - Jaiswal, Pankaj
+AU  - Cooper, Laurel
+AU  - Elser, Justin
+T2  - Nucleic Acids Research
+AB  - The Gene Ontology Consortium (GOC) provides the most comprehensive resource currently available for computable knowledge regarding the functions of genes and gene products. Here, we report the advances of the consortium over the past two years. The new GO-CAM annotation framework was notably improved, and we formalized the model with a computational schema to check and validate the rapidly increasing repository of 2838 GO-CAMs. In addition, we describe the impacts of several collaborations to reﬁne GO and report a 10% increase in the number of GO annotations, a 25% increase in annotated gene products, and over 9,400 new scientiﬁc articles annotated. As the project matures, we continue our efforts to review older annotations in light of newer ﬁndings, and, to maintain consistency with other ontologies. As a result, 20 000 annotations derived from experimental data were reviewed, corresponding to 2.5% of experimental GO annotations. The website (http://geneontology.org) was redesigned for quick access to documentation, downloads and tools. To maintain an accurate resource and support traceability and reproducibility, we have made available a historical archive covering the past 15 years of GO data with a consistent format and ﬁle structure for both the ontology and annotations.
+DA  - 2021/01/08/
+PY  - 2021
+DO  - 10.1093/nar/gkaa1113
+DP  - DOI.org (Crossref)
+VL  - 49
+IS  - D1
+SP  - D325
+EP  - D334
+LA  - en
+SN  - 0305-1048, 1362-4962
+ST  - The Gene Ontology resource
+UR  - https://academic.oup.com/nar/article/49/D1/D325/6027811
+Y2  - 2021/11/03/14:28:07
+L1  - https://watermark.silverchair.com/gkaa1113.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAAsYwggLCBgkqhkiG9w0BBwagggKzMIICrwIBADCCAqgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMElVo5aUprxKUWM1gAgEQgIICeUjjWbBuqJnC6pqWw_bzwNLh8Lt9TGkv0hsEAu6gAU1pUK8rMV2iBi1kiKNcGOCORvUctvFTZRl1ZXD93NsVr62goLSYaoUT5fr_a7LNvIEbnszeIIHN9ShsXHAl4beMWcOnE3NugH0fN6VboapDg1FKK4sX6f9fYvXbeG4QM_ztSd0xWcROW1ll1csR9wMqaj25Mbv2wCZhQeB8-OWb6GcnyuQtgcoJo0O3ee-HYg1R8pFvhlM9KDp9x6L-kzFrjVgp47XRkYkbffrjLTiqwng6IJFzt6yYtdvsUsLhWpxGGNVAd1anbpjep2YBmAvgrnmATbfU3Vc-rwRKmJRVze8RozExutzir8qBeX8N08_qe-s08MbaIHMbaX06V9I8fTWJjbI1aH8XMbn5xw97FoQX1R_E4WCnyIHTASl29uZmQLITWqOqHtUJMIl3knKc4wanHSGaLY4K-kXBRIG4QU-6yOiH6qMhzL7votZJYaVS4e63eQKUTT6nfaleu0zJk_7JrzbtGj99YWF2woSl64XVD5uQlyPZAnN3QdrGyovK-JJ4rfhYTKWpbvRXSOrIX67jOAGDeTfpz5RnwZ4qC_lW5fL2JSYqcAj877jD1pNPJhuPgFeCPPhHDl9JWO8keq1TWuEqsmRtxSodyumbINPVKhiJxHZ-eWKFb051A6sT6mdHHgCP14yZ-5q1o9z1oPp8heMP2zWVVBVase3nFhwjudKx_2ttOqdSqbJ-Nqp6i5Cx136lYhBo4wUOY46E-sCSThWIFbO-0DVpfAiJbIEDn8gD9PoQ5KmNKly4WB_hP_dgVoqw28sXTIgZ6KP_Gp3soq7yjSYS-Q
+ER  - 
+
+TY  - JOUR
+TI  - Proteomics. Tissue-based map of the human proteome
+AU  - Uhlén, Mathias
+AU  - Fagerberg, Linn
+AU  - Hallström, Björn M.
+AU  - Lindskog, Cecilia
+AU  - Oksvold, Per
+AU  - Mardinoglu, Adil
+AU  - Sivertsson, Åsa
+AU  - Kampf, Caroline
+AU  - Sjöstedt, Evelina
+AU  - Asplund, Anna
+AU  - Olsson, IngMarie
+AU  - Edlund, Karolina
+AU  - Lundberg, Emma
+AU  - Navani, Sanjay
+AU  - Szigyarto, Cristina Al-Khalili
+AU  - Odeberg, Jacob
+AU  - Djureinovic, Dijana
+AU  - Takanen, Jenny Ottosson
+AU  - Hober, Sophia
+AU  - Alm, Tove
+AU  - Edqvist, Per-Henrik
+AU  - Berling, Holger
+AU  - Tegel, Hanna
+AU  - Mulder, Jan
+AU  - Rockberg, Johan
+AU  - Nilsson, Peter
+AU  - Schwenk, Jochen M.
+AU  - Hamsten, Marica
+AU  - von Feilitzen, Kalle
+AU  - Forsberg, Mattias
+AU  - Persson, Lukas
+AU  - Johansson, Fredric
+AU  - Zwahlen, Martin
+AU  - von Heijne, Gunnar
+AU  - Nielsen, Jens
+AU  - Pontén, Fredrik
+T2  - Science (New York, N.Y.)
+AB  - Resolving the molecular details of proteome variation in the different tissues and organs of the human body will greatly increase our knowledge of human biology and disease. Here, we present a map of the human tissue proteome based on an integrated omics approach that involves quantitative transcriptomics at the tissue and organ level, combined with tissue microarray-based immunohistochemistry, to achieve spatial localization of proteins down to the single-cell level. Our tissue-based analysis detected more than 90% of the putative protein-coding genes. We used this approach to explore the human secretome, the membrane proteome, the druggable proteome, the cancer proteome, and the metabolic functions in 32 different tissues and organs. All the data are integrated in an interactive Web-based database that allows exploration of individual proteins, as well as navigation of global expression patterns, in all major tissues and organs in the human body.
+DA  - 2015/01/23/
+PY  - 2015
+DO  - 10.1126/science.1260419
+DP  - PubMed
+VL  - 347
+IS  - 6220
+SP  - 1260419
+J2  - Science
+LA  - eng
+SN  - 1095-9203
+L2  - http://www.ncbi.nlm.nih.gov/pubmed/25613900
+KW  - Alternative Splicing
+KW  - Cell Line
+KW  - Databases, Protein
+KW  - Female
+KW  - Genes
+KW  - Genetic Code
+KW  - Humans
+KW  - Internet
+KW  - Male
+KW  - Membrane Proteins
+KW  - Mitochondrial Proteins
+KW  - Neoplasms
+KW  - Protein Array Analysis
+KW  - Protein Isoforms
+KW  - Proteome
+KW  - Tissue Distribution
+KW  - Transcription, Genetic
+ER  - 
+
+TY  - JOUR
+TI  - dendsort: modular leaf ordering methods for dendrogram representations in R
+AU  - Sakai, Ryo
+AU  - Winand, Raf
+AU  - Verbeiren, Toni
+AU  - Moere, Andrew Vande
+AU  - Aerts, Jan
+T2  - F1000Research
+AB  - Dendrograms are graphical representations of binary tree structures resulting from agglomerative hierarchical clustering. In Life Science, a cluster heat map is a widely accepted visualization technique that utilizes the leaf order of a dendrogram to reorder the rows and columns of the data table. The derived linear order is more meaningful than a random order, because it groups similar items together. However, two consecutive items can be quite dissimilar despite proximity in the order. In addition, there are 2 (n-1) possible orderings given n input elements as the orientation of clusters at each merge can be flipped without affecting the hierarchical structure. We present two modular leaf ordering methods to encode both the monotonic order in which clusters are merged and the nested cluster relationships more faithfully in the resulting dendrogram structure. We compare dendrogram and cluster heat map visualizations created using our heuristics to the default heuristic in R and seriation-based leaf ordering methods. We find that our methods lead to a dendrogram structure with global patterns that are easier to interpret, more legible given a limited display space, and more insightful for some cases. The implementation of methods is available as an R package, named "dendsort", from the CRAN package repository. Further examples, documentations, and the source code are available at [https://bitbucket.org/biovizleuven/dendsort/].
+DA  - 2014///
+PY  - 2014
+DO  - 10.12688/f1000research.4784.1
+DP  - PubMed
+VL  - 3
+SP  - 177
+J2  - F1000Res
+LA  - eng
+SN  - 2046-1402
+ST  - dendsort
+L1  - https://f1000research.com/articles/3-177/v1/pdf
+L2  - http://www.ncbi.nlm.nih.gov/pubmed/25232468
+ER  - 
+
+TY  - COMP
+TI  - R: A language and environment for statistical computing
+AU  - R Core Team
+CY  - Vienna, Austria
+DA  - 2021///
+PY  - 2021
+ET  - 4.1.0
+UR  - https://www.R-project.org/
+ER  - 
+
+TY  - JOUR
+TI  - Complex heatmaps reveal patterns and correlations in multidimensional genomic data
+AU  - Gu, Zuguang
+AU  - Eils, Roland
+AU  - Schlesner, Matthias
+T2  - Bioinformatics (Oxford, England)
+DA  - 2016///
+PY  - 2016
+J2  - Bioinformatics
+ER  - 
+
+TY  - JOUR
+TI  - KEGGgraph: a graph approach to KEGG PATHWAY in r and bioconductor
+AU  - Zhang, Jitao David
+AU  - Wiemann, Stefan
+T2  - Bioinformatics (Oxford, England)
+DA  - 2009///
+PY  - 2009
+IS  - 11
+SP  - 1470
+EP  - 1471
+J2  - Bioinformatics
+ER  - 
+
+TY  - COMP
+TI  - KEGGgraph
+AU  - Zhang, Jitao David
+DA  - 2021///
+PY  - 2021
+ET  - 1.54.0
+N1  - R package version 1.54.0
+ER  - 
+
+TY  - RPRT
+TI  - KEGGgraph: Application examples
+AU  - Zhang, Jitao David
+DA  - 2021///
+PY  - 2021
+M3  - manual
+ER  - 
+

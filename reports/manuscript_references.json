@@ -532,9 +532,9 @@
 	},
 	{
 		"id": "carlsonGODbSet2021",
-		"type": "report",
-		"genre": "manual",
+		"type": "book",
 		"title": "GO.db: A set of annotation maps describing the entire Gene Ontology",
+		"version": "3.14.0",
 		"author": [
 			{
 				"family": "Carlson",
@@ -1693,6 +1693,71 @@
 			"date-parts": [
 				[
 					"2016"
+				]
+			]
+		}
+	},
+	{
+		"id": "zhangKEGGgraphGraphApproach2009",
+		"type": "article-journal",
+		"container-title": "Bioinformatics (Oxford, England)",
+		"issue": "11",
+		"journalAbbreviation": "Bioinformatics",
+		"note": "tex.volumn: 25",
+		"page": "1470–1471",
+		"title": "KEGGgraph: a graph approach to KEGG PATHWAY in r and bioconductor",
+		"author": [
+			{
+				"family": "Zhang",
+				"given": "Jitao David"
+			},
+			{
+				"family": "Wiemann",
+				"given": "Stefan"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2009"
+				]
+			]
+		}
+	},
+	{
+		"id": "zhangKEGGgraph2021",
+		"type": "book",
+		"title": "KEGGgraph",
+		"version": "1.54.0",
+		"author": [
+			{
+				"family": "Zhang",
+				"given": "Jitao David"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2021"
+				]
+			]
+		}
+	},
+	{
+		"id": "zhangKEGGgraphApplicationExamples2021a",
+		"type": "report",
+		"genre": "manual",
+		"title": "KEGGgraph: Application examples",
+		"author": [
+			{
+				"family": "Zhang",
+				"given": "Jitao David"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2021"
 				]
 			]
 		}
