@@ -1,0 +1,199 @@
+---
+title: "Correlation of Signals for Normal and Fibrotic Liver"
+author: "Justin Creeden"
+date: "2021-04-20"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+based on: http://www.sthda.com/english/wiki/correlation-test-between-two-variables-in-r
+---
+
+## Purpose
+
+Compare the individual kinase and kinase family intensities between mouse and human normal and fibrotic liver.
+
+## Data
+
+```{r}
+library("ggpubr")
+```
+
+```{r}
+#load data
+jfc_individual_kinase_comparison_data <- read.delim(here::here("data", "inputs", "differential_reports", "individual-kinases.txt"))
+jfc_family_kinase_comparisone_data <- read.delim(here::here("data", "inputs", "differential_reports", "reformatted-both-liver-fibrosis-vs-control.txt"))
+```
+
+## Check Linearity
+
+visualize data with scatter plot, to determine linearity
+
+```{r}
+##### Family - Determine Linearity
+ggscatter(jfc_family_kinase_comparisone_data, x = "human_avg_mean_final_score", y = "mouse_avg_mean_final_score", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "spearman",
+          xlim = c(0,4),
+          ylim = c(0,4),
+          xlab = "Human",
+          ylab = "Mouse",
+          title = "Kinase Families"
+          )
+
+##### Individual - Determine Linearity
+ggscatter(jfc_individual_kinase_comparison_data, x = "human_mean_final_score", y = "mouse_mean_final_score", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "spearman",
+          xlim = c(0,4),
+          ylim = c(0,4),
+          xlab = "Human",
+          ylab = "Mouse", 
+          title = "Individual Kinases",
+          )
+```
+From the plots above, we can determine if the covariation (i.e.) relationship is linear. In the situation where the scatter plots show curved patterns, we are dealing with nonlinear association between the two variables.
+
+## Evaluate Normality
+
+### Shapiro Wilks
+
+
+```{r}
+#Family
+shapiro.test(jfc_family_kinase_comparisone_data$human_avg_mean_final_score)
+shapiro.test(jfc_family_kinase_comparisone_data$mouse_avg_mean_final_score)
+
+#Individual
+shapiro.test(jfc_individual_kinase_comparison_data$human_mean_final_score)
+shapiro.test(jfc_individual_kinase_comparison_data$mouse_mean_final_score)
+```
+From the output, if the two p-values are greater than the significance level 0.05 its implying that the distribution of the data are not significantly different from normal distribution. In other words, we can assume the normality.
+
+
+### Q-Q Plots
+
+Visual inspection of the data normality using Q-Q plots (quantile-quantile plots).
+
+```{r}
+#Family
+ggpubr::ggqqplot(jfc_family_kinase_comparisone_data$human_avg_mean_final_score,
+                 xlim = c(-3,3),
+                 ylim = c(0,5),
+                 ylab = "Human", 
+                 title = "Kinase Families")
+ggpubr::ggqqplot(jfc_family_kinase_comparisone_data$mouse_avg_mean_final_score, 
+                 xlim = c(-3,3),
+                 ylim = c(0,5),
+                 ylab = "Mouse", 
+                 title = "Kinase Families")
+
+#Individual
+ggpubr::ggqqplot(jfc_individual_kinase_comparison_data$human_mean_final_score, 
+                 xlim = c(-3,3),
+                 ylim = c(0,5),
+                 ylab = "Human", 
+                 title = "Individual Kinases")
+ggpubr::ggqqplot(jfc_individual_kinase_comparison_data$mouse_mean_final_score, 
+                 xlim = c(-3,3),
+                 ylim = c(0,5),
+                 ylab = "Mouse",
+                 title = "Individual Kinases")
+```
+
+Q-Q plot draws the correlation between a given sample and the normal distribution. Note that, if the data are not normally distributed, it’s recommended to use the non-parametric correlation, including Spearman and Kendall rank-based correlation tests.
+
+
+
+## Correlation Tests
+
+### Pearson
+
+Pearson correlation (r), which measures a linear dependence between two variables (x and y). It’s also known as a parametric correlation test because it depends to the distribution of the data. It can be used only when x and y are from normal distribution. The plot of y = f(x) is named the linear regression curve.
+
+```{r}
+#Family
+cor.test(x = jfc_family_kinase_comparisone_data$human_avg_mean_final_score, y = jfc_family_kinase_comparisone_data$mouse_avg_mean_final_score, method = "pearson")
+
+#Individual
+cor.test(x = jfc_individual_kinase_comparison_data$human_mean_final_score, y = jfc_individual_kinase_comparison_data$mouse_mean_final_score, method = "pearson")
+```
+
+In the result above: t is the t-test statistic value (t=), df is the degrees of freedom (df=), p-value is the significance level of the t-test (p-value=). conf.int is the confidence interval of the correlation coefficient at 95% (conf.int = [,]); sample estimates is the correlation coefficient (Cor.coeff=).If the p-value of the test is less than the significance level alpha = 0.05. We can conclude that x and y are significantly correlated with a correlation coefficient of (cor.coeff=) and p-value of (p-value=).
+
+
+
+
+### Kendall-tau
+
+Kendall tau is a rank-based correlation coefficient (non-parametric). 
+
+The Kendall rank correlation coefficient or Kendall’s tau statistic is used to estimate a rank-based measure of association. This test may be used if the data do not necessarily come from a bivariate normal distribution.
+
+The Kendall correlation method measures the correspondence between the ranking of x and y variables. The total number of possible pairings of x with y observations is n(n−1)/2, where n is the size of x and y.The procedure is as follow: Begin by ordering the pairs by the x values. If x and y are correlated, then they would have the same relative rank orders. Now, for each yi, count the number of yj>yi (concordant pairs (c)) and the number of yj<yi (discordant pairs (d)).
+
+```{r}
+#Family
+cor.test(x = jfc_family_kinase_comparisone_data$human_avg_mean_final_score, y = jfc_family_kinase_comparisone_data$mouse_avg_mean_final_score, method = "kendall")
+
+#Individual
+cor.test(x = jfc_individual_kinase_comparison_data$human_mean_final_score, y = jfc_individual_kinase_comparison_data$mouse_mean_final_score, method = "kendall")
+```
+
+In the result above: t is the t-test statistic value (t=), df is the degrees of freedom (df=), p-value is the significance level of the t-test (p-value=). conf.int is the confidence interval of the correlation coefficient at 95% (conf.int = [,]); sample estimates is the correlation coefficient (Cor.coeff=).If the p-value of the test is less than the significance level alpha = 0.05. We can conclude that x and y are significantly correlated with a correlation coefficient of (cor.coeff=) and p-value of (p-value=).
+
+
+
+
+### Spearman
+
+Spearman rho is a rank-based correlation coefficient (non-parametric). 
+
+Spearman’s rho statistic is also used to estimate a rank-based measure of association. This test may be used if the data do not come from a bivariate normal distribution.
+
+The Spearman correlation method computes the correlation between the rank of x and the rank of y variables.
+```{r}
+#Family
+cor.test(x = jfc_family_kinase_comparisone_data$human_avg_mean_final_score, y = jfc_family_kinase_comparisone_data$mouse_avg_mean_final_score, method = "spearman")
+
+#Individual
+cor.test(x = jfc_individual_kinase_comparison_data$human_mean_final_score, y = jfc_individual_kinase_comparison_data$mouse_mean_final_score, method = "spearman")
+```
+
+In the result above: t is the t-test statistic value (t=), df is the degrees of freedom (df=), p-value is the significance level of the t-test (p-value=). conf.int is the confidence interval of the correlation coefficient at 95% (conf.int = [,]); sample estimates is the correlation coefficient (Cor.coeff=).If the p-value of the test is less than the significance level alpha = 0.05. We can conclude that x and y are significantly correlated with a correlation coefficient of (cor.coeff=) and p-value of (p-value=).
+
+
+```{r}
+#Family
+plot_kinase_family_human_mouse_correlation<- ggplot(jfc_family_kinase_comparisone_data, aes(jfc_family_kinase_comparisone_data$human_avg_mean_final_score,jfc_family_kinase_comparisone_data$mouse_avg_mean_final_score)) +
+  geom_point(size=4) +
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE, color="#2C3E50")
+
+plot_kinase_family_human_mouse_correlation + ggtitle("Human-Rodent Correlation (Kinase families)") + xlab("Human kinase family score") + ylab("Rodent kinase family score")
+
+pdf(file = (paste0(getwd(),"/",Sys.Date()," - ","labeled_plot_kinase_family_human_mouse_correlation",".pdf")),useDingbats = F, height = 10.25)
+plot_kinase_family_human_mouse_correlation + ggtitle("Human-Rodent Correlation (Kinase families)") + xlab("Human kinase family score") + ylab("Rodent kinase family score")
+dev.off()
+
+png(file = (paste0(getwd(),"/",Sys.Date()," - ","labeled_plot_kinase_family_human_mouse_correlation",".png")),width = 20000,height = 10000,units = "px",pointsize = 12,res = 1200)
+plot_kinase_family_human_mouse_correlation + ggtitle("Human-Rodent Correlation (Kinase families)") + xlab("Human kinase family score") + ylab("Rodent kinase family score")
+dev.off()
+
+
+#Individual
+plot_individual_kinase_human_mouse_correlation<- ggplot(jfc_individual_kinase_comparison_data, aes(jfc_individual_kinase_comparison_data$human_mean_final_score,jfc_individual_kinase_comparison_data$mouse_mean_final_score)) +
+  geom_point(size=4) +
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE, color="#2C3E50")
+
+plot_individual_kinase_human_mouse_correlation + ggtitle("Human-Rodent Correlation (Individual kinases)") + xlab("Human kinase score") + ylab("Rodent kinase score")
+
+pdf(file = (paste0(getwd(),"/",Sys.Date()," - ","labeled_plot_individual_kinase_human_mouse_correlation",".pdf")),useDingbats = F, height = 10.25)
+plot_individual_kinase_human_mouse_correlation + ggtitle("Human-Rodent Correlation (Individual kinases)") + xlab("Human kinase score") + ylab("Rodent kinase score")
+dev.off()
+
+png(file = (paste0(getwd(),"/",Sys.Date()," - ","labeled_plot_individual_kinase_human_mouse_correlation",".png")),width = 20000,height = 10000,units = "px",pointsize = 12,res = 1200)
+plot_individual_kinase_human_mouse_correlation + ggtitle("Human-Rodent Correlation (Individual kinases)") + xlab("Human kinase score") + ylab("Rodent kinase score")
+dev.off()
+```
+
