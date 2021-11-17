@@ -18,7 +18,7 @@ How exactly should we be using expression cutoffs in the Human Protein Atlas (HP
 library(dplyr)
 library(ggplot2)
 library(UpSetR)
-source(here::here("kea3_functions.R"))
+source(here::here("scripts", "functions.R"))
 ```
 
 ## Data

@@ -529,7 +529,7 @@ transform_raw_data = function(raw_data){
 
 create_go_annotation = function(db, ontology = NULL){
   all_genes = keys(db)
-  go_all_gene = select(db, keys = all_genes, columns = c("GOALL", "ONTOLOGYALL"))
+  go_all_gene = AnnotationDbi::select(db, keys = all_genes, columns = c("GOALL", "ONTOLOGYALL"))
   
   if (!is.null(ontology)) {
     go_all_gene = go_all_gene[go_all_gene$ONTOLOGYALL == ontology, ]
@@ -539,7 +539,7 @@ create_go_annotation = function(db, ontology = NULL){
   }
   go_2_gene = split(go_all_gene$ENTREZID, go_all_gene$GOALL)
   go_2_gene = lapply(go_2_gene, unique)
-  go_desc = select(GO.db::GO.db, keys = names(go_2_gene), columns = "TERM", keytype = "GOID")$TERM
+  go_desc = AnnotationDbi::select(GO.db::GO.db, keys = names(go_2_gene), columns = "TERM", keytype = "GOID")$TERM
   names(go_desc) = names(go_2_gene)
 
   go_annotation = categoryCompare2::annotation(annotation_features = go_2_gene,

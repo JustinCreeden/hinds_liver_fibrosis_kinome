@@ -126,9 +126,9 @@ mouse_go_bp = hypergeometric_feature_enrichment(
 
 gocut = 0.001
 
-all_go_sig = get_significant_annotations(all_go, padjust <= 0.001, counts >= 2)
+#all_go_sig = get_significant_annotations(all_go, padjust <= gocut, counts >= 2)
 
-goall_table = extract_stats_table(all_go_sig, specific_entrez)
+#goall_table = extract_stats_table(all_go_sig, specific_entrez)
 
 
 bp_go = combine_enrichments(human = human_go_bp,
