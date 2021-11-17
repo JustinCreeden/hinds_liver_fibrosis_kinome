@@ -1,11 +1,11 @@
 # Run script to completely recreate R analyses from the manuscript.
 # {future} package is used to run each script in it's own environment.
 # If you want to see the records of what was run or errors from a 
-#   particular script running, then you should use `value`.
+#   particular script running, then you should examine it's output.
 #   For example, for the first script to run:
-#   kea3_enrichment = future(source(here::here("scripts", "kea3_runs.R"))) # runs it
-#   value(kea3_enrichment) # shows any output from running it
-#   
+#   kea3_enrichment = r(function() source(here::here("scripts", "kea3_runs.R"))) # runs it
+#   kea3_enrichment # shows any output from running it
+#   ..., show = TRUE) # will show what is going on in the r sub-process
 # Everything that was previously generated is included in the output
 # and reports directories,
 # so these are only necessary if you want to update something.
