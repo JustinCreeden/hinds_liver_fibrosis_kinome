@@ -9,6 +9,8 @@ Creeden et al., 2021
 
 ## Directory Structure
 
+```
+
 /data: all data used and generated outside of Human Protein Atlas data
 
   /inputs: data used as input to analyses
@@ -51,6 +53,8 @@ Creeden et al., 2021
   run_all.R: script to regenerate all of the results and reports    
   
 /renv.lock: json formatted file recording the packages installed for this analysis and their versions. Generated from `renv::snapshot()`.
+```
+
 
 ## HPA Data
 
