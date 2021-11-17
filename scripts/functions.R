@@ -52,8 +52,8 @@ calculate_mode_sd = function(pos_expression){
 }
 
 create_kea3_networks = function(){
-  kea3_data_dir = here::here("kea3_datasets")
-  all_files = dir(kea3_data_dir, full.names = TRUE)
+  kea3_data_dir = here::here("data", "inputs", "kea3")
+  all_files = dir(kea3_data_dir, full.names = TRUE, pattern = "gmt$")
   ks_libs = c("Cheng.KSIN", "PTMsigDB", "PhosD.All")
   ppi_libs = c("BioGRID", "MINT", "Mentha", "HIPPIE", "PrePPI", "Cheng.PPI", "STRING")
   
@@ -391,14 +391,14 @@ export_plots = function(plot_list, ppt_file){
     }
     
   }
-  print(new_ppt, target = here::here(ppt_file))
+  print(new_ppt, target = here::here("data", "outputs", "figures", ppt_file))
 }
 
 get_kinase_lfc = function(){
   mapping = c("Q" = "\\[theta\\]", "D" = "\\[delta\\]", "G" = "\\[gamma\\]", 
               "H" = "\\[eta\\]", "I" = "\\[iota\\]", "E" = "\\[epsilon\\]", 
               "Z" = "\\[zeta\\]", "A" = "\\[alpha\\]", "B" = "\\[beta\\]")
-  lfc_dir = here::here("input/2021_10_07-Justin-Data-Deposit/UKA derived output fold-changes")
+  lfc_dir = here::here("data", "inputs", "2021_10_07-Justin-Data-Deposit", "UKA derived output fold-changes")
   lfc_files = dir(lfc_dir, pattern = "txt$", full.names = TRUE)
   
   lfc_values = purrr::map_df(lfc_files, function(.x){
@@ -464,7 +464,7 @@ remove_stranded_nodes = function(in_graph){
 }
 
 read_raw_files = function(){
-  near_raw_dir = here::here("input/2021_10_07-Justin-Data-Deposit/Near-Raw-Data")
+  near_raw_dir = here::here("data", "inputs", "pamgene_near_raw")
   raw_files = dir(near_raw_dir, pattern = ".txt", full.names = TRUE)
   
   in_raw = function(raw_file){

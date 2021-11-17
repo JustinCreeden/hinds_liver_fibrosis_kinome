@@ -1,18 +1,18 @@
-source(here::here("kea3_functions.R"))
+source(here::here("scripts", "functions.R"))
 library(org.Hs.eg.db)
 library(dplyr)
 go_all = create_go_annotation(org.Hs.eg.db)
 
-saveRDS(go_all, here::here("go_all.rds"))
+saveRDS(go_all, here::here("data", "outputs", "rds_files", "go_all.rds"))
 
 go_bp = create_go_annotation(org.Hs.eg.db, "BP")
-saveRDS(go_bp, here::here("go_bp.rds"))
+saveRDS(go_bp, here::here("data", "outputs", "rds_files", "go_bp.rds"))
 
 go_mf = create_go_annotation(org.Hs.eg.db, "MF")
-saveRDS(go_mf, here::here("go_mf.rds"))
+saveRDS(go_mf, here::here("data", "outputs", "rds_files", "go_mf.rds"))
 
 go_cc = create_go_annotation(org.Hs.eg.db, "CC")
-saveRDS(go_cc, here::here("go_cc.rds"))
+saveRDS(go_cc, here::here("data", "outputs", "rds_files", "go_cc.rds"))
 
 library(reactome.db)
 all_reactome = keys(reactome.db)
@@ -30,4 +30,4 @@ reactome_annotation = categoryCompare2::annotation(annotation_features = reactom
                                  annotation_type = "reactome",
                                  description = reactome_id2[names(reactome_split)],
                                  feature_type = "ENTREZID")
-saveRDS(reactome_annotation, here::here("reactome_annotation.rds"))
+saveRDS(reactome_annotation, here::here("data", "outputs", "rds_files", "reactome_annotation.rds"))

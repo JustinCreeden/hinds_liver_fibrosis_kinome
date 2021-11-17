@@ -11,4 +11,4 @@ pathway_data = purrr::map(pathways, function(.x){
   graph_df
 })
 
-saveRDS(pathway_data, file = here::here("rmflight_reports", "kegg_pathway_graphs.rds"))
+saveRDS(pathway_data, file = here::here("data", "outputs", "rds_files", "kegg_pathway_graphs.rds"))
