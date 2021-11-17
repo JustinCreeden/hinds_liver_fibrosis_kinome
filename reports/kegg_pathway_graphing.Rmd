@@ -9,7 +9,7 @@ output:
     df_print: paged
 editor_options: 
   chunk_output_type: console
-bibliography: '`r here::here("rmflight_reports", "Hinds_Kinome_references.json")`'
+bibliography: '`r here::here("reports", "manuscript_references.json")`'
 ---
 
 The [final pathway](#final-pathway) that should be used is at the end of this document.
@@ -33,21 +33,21 @@ library(tidygraph)
 library(dplyr)
 library(ggraph)
 library(org.Hs.eg.db)
-source(here::here("rmflight_reports", "kea3_functions.R"))
+source(here::here("scripts", "functions.R"))
 theme_set(cowplot::theme_cowplot())
 ```
 
 ```{r data}
-gene_list_files = dir(here::here("input"), pattern = "^z", full.names = TRUE)
+gene_list_files = dir(here::here("data", "inputs", "kea3"), pattern = "^z", full.names = TRUE)
 gene_lists = purrr::map(gene_list_files, ~ scan(.x, character(), sep = "\n", quiet = TRUE, skip = 1))
 names(gene_lists) = c("human_ptk", "mouse_ptk", "human_stk", "mouse_stk")
 
 human_list = unique(unlist(gene_lists[c("human_ptk", "human_stk")]))
 mouse_list = unique(unlist(gene_lists[c("mouse_ptk", "mouse_stk")]))
 
-specific_list = scan(here::here("input", "very_specific_genelist.txt"), what = character(), sep = "\n", quiet = TRUE)
+specific_list = scan(here::here("data", "inputs", "very_specific_genelist.txt"), what = character(), sep = "\n", quiet = TRUE)
 
-kea3_files = dir(here::here("kea3_datasets"), full.names = TRUE)
+kea3_files = dir(here::here("data", "inputs", "kea3"), full.names = TRUE, pattern = "gmt$")
 kea3_files = grep("Cheng.KSIN|PTMsigDB|PhosD.All|STRING.bind", kea3_files, value = TRUE)
 kea3_data = purrr::map(kea3_files, parse_gmt)
 kea3_df = purrr::map_df(kea3_data, function(in_data){
@@ -56,11 +56,11 @@ kea3_df = purrr::map_df(kea3_data, function(in_data){
   })
 })
 
-kegg_graphs = readRDS(here::here("rmflight_reports", "kegg_pathway_graphs.rds"))
+kegg_graphs = readRDS(here::here("data", "outputs", "rds_files", "kegg_pathway_graphs.rds"))
 all_entrez = keys(org.Hs.eg.db)
 org_hs_df = select(org.Hs.eg.db, keys = all_entrez, columns = "SYMBOL")
 
-specific_to_collapsed = read.table(here::here("rmflight_reports", "full_nodes_collapsed.csv"), sep = "\t", header = TRUE)
+specific_to_collapsed = read.table(here::here("data", "inputs", "pathways", "full_nodes_collapsed.csv"), sep = "\t", header = TRUE)
 
 uka_list = unique(c(human_list, mouse_list))
 ```
@@ -430,7 +430,7 @@ I don't think we have exact pathways, unfortunately.
 ```{r export_pathway}
 plot_list = list(collapsed_uka = full_graph,
                  sub_uka = erbb_graph)
-export_plots(plot_list, "rmflight_reports/kegg_pathway_plot_2021-11-10.pptx")
+export_plots(plot_list, "kegg_pathway_plot.pptx")
 ```
 
 Figure X. Combined KEGG pathways from MAPK, PI3K, RAS and EGFR. 

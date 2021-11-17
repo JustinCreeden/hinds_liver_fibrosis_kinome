@@ -18,6 +18,7 @@ Compare the individual kinase and kinase family intensities between mouse and hu
 
 ```{r}
 library("ggpubr")
+figure_loc = here::here("data", "outputs", "figures")
 ```
 
 ```{r}
@@ -167,33 +168,34 @@ In the result above: t is the t-test statistic value (t=), df is the degrees of 
 
 ```{r}
 #Family
-plot_kinase_family_human_mouse_correlation<- ggplot(jfc_family_kinase_comparisone_data, aes(jfc_family_kinase_comparisone_data$human_avg_mean_final_score,jfc_family_kinase_comparisone_data$mouse_avg_mean_final_score)) +
+plot_kinase_family_human_mouse_correlation <- ggplot(jfc_family_kinase_comparisone_data, aes(x = human_avg_mean_final_score, y = mouse_avg_mean_final_score)) +
   geom_point(size=4) +
   geom_smooth(method=lm, se=FALSE, fullrange=TRUE, color="#2C3E50")
 
 plot_kinase_family_human_mouse_correlation + ggtitle("Human-Rodent Correlation (Kinase families)") + xlab("Human kinase family score") + ylab("Rodent kinase family score")
 
-pdf(file = (paste0(getwd(),"/",Sys.Date()," - ","labeled_plot_kinase_family_human_mouse_correlation",".pdf")),useDingbats = F, height = 10.25)
+
+pdf(file = file.path(figure_loc, "labeled_plot_kinase_family_human_mouse_correlation.pdf"), useDingbats = F, height = 10.25)
 plot_kinase_family_human_mouse_correlation + ggtitle("Human-Rodent Correlation (Kinase families)") + xlab("Human kinase family score") + ylab("Rodent kinase family score")
 dev.off()
 
-png(file = (paste0(getwd(),"/",Sys.Date()," - ","labeled_plot_kinase_family_human_mouse_correlation",".png")),width = 20000,height = 10000,units = "px",pointsize = 12,res = 1200)
+png(file = file.path(figure_loc, "labeled_plot_kinase_family_human_mouse_correlation.png"), width = 20000,height = 10000,units = "px",pointsize = 12,res = 1200)
 plot_kinase_family_human_mouse_correlation + ggtitle("Human-Rodent Correlation (Kinase families)") + xlab("Human kinase family score") + ylab("Rodent kinase family score")
 dev.off()
 
 
 #Individual
-plot_individual_kinase_human_mouse_correlation<- ggplot(jfc_individual_kinase_comparison_data, aes(jfc_individual_kinase_comparison_data$human_mean_final_score,jfc_individual_kinase_comparison_data$mouse_mean_final_score)) +
+plot_individual_kinase_human_mouse_correlation<- ggplot(jfc_individual_kinase_comparison_data, aes(x = human_mean_final_score, y = mouse_mean_final_score)) +
   geom_point(size=4) +
   geom_smooth(method=lm, se=FALSE, fullrange=TRUE, color="#2C3E50")
 
 plot_individual_kinase_human_mouse_correlation + ggtitle("Human-Rodent Correlation (Individual kinases)") + xlab("Human kinase score") + ylab("Rodent kinase score")
 
-pdf(file = (paste0(getwd(),"/",Sys.Date()," - ","labeled_plot_individual_kinase_human_mouse_correlation",".pdf")),useDingbats = F, height = 10.25)
+pdf(file = file.path(figure_loc, "labeled_plot_individual_kinase_human_mouse_correlation.pdf") ,useDingbats = F, height = 10.25)
 plot_individual_kinase_human_mouse_correlation + ggtitle("Human-Rodent Correlation (Individual kinases)") + xlab("Human kinase score") + ylab("Rodent kinase score")
 dev.off()
 
-png(file = (paste0(getwd(),"/",Sys.Date()," - ","labeled_plot_individual_kinase_human_mouse_correlation",".png")),width = 20000,height = 10000,units = "px",pointsize = 12,res = 1200)
+png(file = file.path(figure_loc, "labeled_plot_individual_kinase_human_mouse_correlation.png"), width = 20000,height = 10000,units = "px",pointsize = 12,res = 1200)
 plot_individual_kinase_human_mouse_correlation + ggtitle("Human-Rodent Correlation (Individual kinases)") + xlab("Human kinase score") + ylab("Rodent kinase score")
 dev.off()
 ```

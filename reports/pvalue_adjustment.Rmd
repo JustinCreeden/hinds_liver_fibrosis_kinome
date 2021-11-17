@@ -9,7 +9,7 @@ output:
     df_print: paged
 editor_options: 
   chunk_output_type: console
-bibliography: '`r here::here("rmflight_reports", "Hinds_Kinome_references.json")`'
+bibliography: '`r here::here("reports", "manuscript_references.json")`'
 ---
 
 
@@ -27,12 +27,12 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 ```{r packages}
 library(dplyr)
-source(here::here("rmflight_reports", "kea3_functions.R"))
+source(here::here("scripts", "functions.R"))
 ```
 
 
 ```{r get_data}
-pvalues = readxl::read_excel(here::here("rmflight_reports", "Liver-Kinome_RTPCR-mRNA and p-values_11-7-21.xlsx"))
+pvalues = readxl::read_excel(here::here("data", "inputs", "Liver-Kinome_RTPCR-mRNA and p-values_11-7-21.xlsx"))
 
 human_cols = c(2, 3)
 mouse_cols = c(6, 7)
@@ -88,7 +88,7 @@ all_adjusted = cbind(adjusted_data_human, data.frame(...5 = character(nrow(pvalu
 ```
 
 ```{r write_out}
-openxlsx::write.xlsx(all_adjusted, file = here::here("rmflight_reports", "Liver-Kinome_RTPCR-mRNA and p-values_11-7-21_adjusted.xlsx"), overwrite = TRUE)
+openxlsx::write.xlsx(all_adjusted, file = here::here("data", "outputs", "tables", "Liver-Kinome_RTPCR-mRNA and p-values_11-7-21_adjusted.xlsx"), overwrite = TRUE)
 ```
 
 ## Methods

@@ -26,7 +26,7 @@ source(here::here("kea3_functions.R"))
 HPA consensus data downloaded on 2021-09-27.
 
 ```{r load_hpa_expression}
-hpa_expression = read.table(here::here("hpa_data", "rna_consensus_2021-09-27.tsv"),
+hpa_expression = read.table(here::here("data", "inputs", "hpa", "rna_consensus.tsv"),
                             header = TRUE, sep = "\t")
 hpa_expression = hpa_expression %>%
   dplyr::mutate(logX = log1p(NX))

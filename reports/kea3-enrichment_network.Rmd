@@ -40,8 +40,7 @@ library(dplyr)
 library(ggraph)
 theme_set(cowplot::theme_cowplot())
 knitr::opts_chunk$set(fig.width = 8, fig.height = 8)
-source(here::here("rmflight_reports/kea3_functions.R"))
-save_loc = here::here("rmflight_reports/kea3_enrichment_2021-09-29")
+source(here::here("scripts", "functions.R"))
 
 set_colors = scale_color_discrete()$palette(3)
 ```
@@ -97,10 +96,10 @@ All genes with a log(expression) > than $cutoff$ in the tissue of interest are s
 ## Results
 
 ```{r load_kea3_data}
-kea3_results = readRDS(here::here("rmflight_reports/kea3_enrichment_2021-09-29", "kea3_results.rds"))
-hpa_consensus = read.table(here::here("hpa_data", "rna_consensus_2021-09-27.tsv"), header = TRUE, sep = "\t") %>%
+kea3_results = readRDS(here::here("data", "outputs", "rds_files", "kea3_results.rds"))
+hpa_consensus = read.table(here::here("data", "inputs", "hpa", "rna_consensus.tsv"), header = TRUE, sep = "\t") %>%
   dplyr::mutate(logX = log1p(NX))
-kea3_network = readRDS(here::here("rmflight_reports/kea3_datasets", "kea3_networks_2021-09-30.rds"))
+kea3_network = readRDS(here::here("data", "outputs", "rds_files", "kea3_networks.rds"))
 ```
 
 First, we need to figure out what is expressed in the liver.
@@ -261,7 +260,7 @@ export_plots(plot_list, "network_plots.pptx")
 node_data = all_results_source %>%
   activate(nodes) %>%
   as.data.frame()
-openxlsx::write.xlsx(node_data, file = here::here("rmflight_reports", "kea3_network_nodes_foldchanges.xlsx"), overwrite = TRUE)
+openxlsx::write.xlsx(node_data, file = here::here("data", "outputs", "tables", "kea3_network_nodes_foldchanges.xlsx"), overwrite = TRUE)
 ```
 
 ## Executive Summary
