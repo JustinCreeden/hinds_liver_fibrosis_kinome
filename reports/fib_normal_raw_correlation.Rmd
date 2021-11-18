@@ -276,7 +276,9 @@ We average the values across the replicates, and then take the fibrotic - normal
 ```{r export_heatmap}
 set_flextable_defaults(digits = 2)
 big_border = fp_border_default(width = 2)
-group_cor_df = as.data.frame(group_cor) %>%
+group_cor2 = group_cor
+group_cor2[lower.tri(group_cor2)] = NA
+group_cor_df = as.data.frame(group_cor2) %>%
   tibble::rownames_to_column("type") %>%
   flextable() %>%
   colformat_double() %>%
