@@ -190,13 +190,11 @@ human_network = ggraph(human_subset, layout = "graphopt") +
                  aes(alpha = alpha),
                  show.legend = FALSE) +
   geom_node_label(aes(label = name, alpha = alpha,
-                      fill = TypeSource,
-                      size = LFC.Human),
+                      fill = TypeSource),
                   label.size = NA) +
-  labs(subtitle = "Human KEA3 Network") +
   guides(alpha = "none", size = "none") + 
   scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
-  theme(legend.position = c(0.02, 0.92))
+  theme(legend.position = c(0.02, 0.85))
 human_network
 ```
 
@@ -212,7 +210,6 @@ common_network = ggraph(common_subset, layout = "graphopt") +
   geom_node_label(aes(label = name, alpha = alpha,
                       fill = TypeSource),
                   label.size = NA) +
-  labs(subtitle = "Common KEA3 Network") +
   guides(alpha = "none") + 
   scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
   theme(legend.position = c(0.02, 0.92))
@@ -229,13 +226,11 @@ mouse_network = ggraph(mouse_subset, layout = "graphopt") +
                  aes(alpha = alpha),
                  show.legend = FALSE) +
   geom_node_label(aes(label = name, alpha = alpha,
-                      fill = TypeSource,
-                      size = LFC.Mouse),
+                      fill = TypeSource),
                   label.size = NA) +
-  labs(subtitle = "Mouse KEA3 Network") +
   guides(alpha = "none", size = "none") + 
   scale_fill_manual(values = set_colors, limits = c("kinase.E", "kinase.O", "other")) +
-  theme(legend.position = c(0.02, 0.92))
+  theme(legend.position = c(0.02, 0.85))
 mouse_network
 ```
 
@@ -253,14 +248,29 @@ I'm not sure what else should be here, so I'm going to stop.
 
 ```{r export_plots}
 plot_list = list(human = human_network,
-                 common = common_network,
                  mouse = mouse_network)
-export_plots(plot_list, "network_plots.pptx")
+export_plots(plot_list, "kea3_molecular_interaction_plots.pptx")
+
+Cairo::CairoPNG(
+  filename = here::here("data", "outputs", "figures", "figure5a_kea3_molecular_interaction_human.png"),
+  bg = "white",
+  width = 10, height = 10, units = "in", res = 300
+)
+human_network
+dev.off()
+
+Cairo::CairoPNG(
+  filename = here::here("data", "outputs", "figures", "figure5b_kea3_molecular_interaction_mouse.png"),
+  bg = "white",
+  width = 10, height = 10, units = "in", res = 300
+)
+mouse_network
+dev.off()
 
 node_data = all_results_source %>%
   activate(nodes) %>%
   as.data.frame()
-openxlsx::write.xlsx(node_data, file = here::here("data", "outputs", "tables", "kea3_network_nodes_foldchanges.xlsx"), overwrite = TRUE)
+openxlsx::write.xlsx(node_data, file = here::here("data", "outputs", "tables", "kea3_molecular_interaction_foldchanges.xlsx"), overwrite = TRUE)
 ```
 
 ## Executive Summary
