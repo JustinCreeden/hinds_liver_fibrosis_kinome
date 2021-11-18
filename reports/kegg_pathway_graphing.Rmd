@@ -409,7 +409,7 @@ full_graph
 
 ```{r plot_erbb}
 erbb_graph = full_graph +
-  coord_cartesian(xlim = erbb_xlim, ylim = erbb_ylim) +
+  coord_cartesian(xlim = erbb_xlim, ylim = erbb_ylim, expand = TRUE, clip = "on") +
   theme(legend.position = "none")
 erbb_graph
 ```
@@ -427,10 +427,24 @@ knitr::kable(purrr::map_df(split_comms, function(in_comm){
 
 I don't think we have exact pathways, unfortunately.
 
-```{r export_pathway}
-plot_list = list(collapsed_uka = full_graph,
-                 sub_uka = erbb_graph)
-export_plots(plot_list, "kegg_pathway_plot.pptx")
+```{r export_pathway, fig.keep = "none"}
+Cairo::CairoPNG(
+  filename = here::here("data", "outputs", "figures", "full_kegg_pathway.png"),
+  width = 10, height = 10, res = 300, bg = "white", units = "in"
+)
+full_graph
+dev.off()
+
+Cairo::CairoPNG(
+  filename = here::here("data", "outputs", "figures", "erbb_kegg_pathway.png"),
+  width = 10, height = 10, res = 300, bg = "white", units = "in"
+)
+erbb_graph
+dev.off()
+
+#plot_list = list(collapsed_uka = full_graph,
+#                 sub_uka = erbb_graph)
+#export_plots(plot_list, "kegg_pathway_plot.pptx")
 ```
 
 Figure X. Combined KEGG pathways from MAPK, PI3K, RAS and EGFR. 

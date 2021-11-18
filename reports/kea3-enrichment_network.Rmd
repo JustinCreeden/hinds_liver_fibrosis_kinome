@@ -252,7 +252,7 @@ plot_list = list(human = human_network,
 export_plots(plot_list, "kea3_molecular_interaction_plots.pptx")
 
 Cairo::CairoPNG(
-  filename = here::here("data", "outputs", "figures", "supp_figure5a_kea3_molecular_interaction_human.png"),
+  filename = here::here("data", "outputs", "figures", "supp_figure3A_kea3_molecular_interaction_human.png"),
   bg = "white",
   width = 10, height = 10, units = "in", res = 300
 )
@@ -260,7 +260,7 @@ human_network
 dev.off()
 
 Cairo::CairoPNG(
-  filename = here::here("data", "outputs", "figures", "supp_figure5b_kea3_molecular_interaction_mouse.png"),
+  filename = here::here("data", "outputs", "figures", "supp_figure3B_kea3_molecular_interaction_mouse.png"),
   bg = "white",
   width = 10, height = 10, units = "in", res = 300
 )

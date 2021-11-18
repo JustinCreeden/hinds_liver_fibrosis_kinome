@@ -239,13 +239,13 @@ combined_annot = c(kegg_annotation@annotation_features[kegg_table$path_id], go_b
 export_pathway_tables(list(KEGG = kegg_table,
                            REACTOME = reactome_table,
                            GOBP = gobp_table),
-                      pathway_file = here::here("data", "outputs", "tables", "pathway_tables.xlsx"))
+                      pathway_file = here::here("data", "outputs", "tables", "supp_table2_pathway_enrichment_results.xlsx"))
 ```
 
 Finally, we can use Kendall-tau correlation to ask how similar the p-values are within each table between mouse and human.
 The list includes anything that was **significant** (below the p-value cutoff) for either mouse or human.
 
-```{r ici_kt_tables, fig.width = 3, fig.height=9}
+```{r ici_kt_tables, fig.width = 9, fig.height = 3}
 split_source = split(all_results, all_results$source)
 ici_source = purrr::map_df(split_source, function(.x){
   ici_res = ici_kt(.x$mouse.padjust, .x$human.padjust, "global")
@@ -275,15 +275,20 @@ sig_plots = ggplot(all_results, aes(x = -1 * log10(human.padjust), y = -1 * log1
   geom_vline(aes(xintercept = -1 * log10(cut)), data = sig_cuts, color = "red") +
   geom_abline(slope = 1, color = "blue") +
   geom_text(data = ici_source, aes(x = x, y = y, label = text)) +
-  facet_wrap(~ source, ncol = 1) +
+  facet_wrap(~ source, nrow = 1) +
   coord_equal() +
   labs(x = "Human Adjusted-PValues",
        y = "Mouse Adjusted-PValues")
 sig_plots
 ```
 
-```{r save_sig_plots}
-
+```{r save_sig_plots, fig.keep='none'}
+Cairo::CairoPNG(
+  filename = here::here("data", "outputs", "figures", "supp_figure1_enrichmentcorrelation.png"),
+  height = 4, width = 12, res = 300, units = "in", bg = "white"
+)
+sig_plots
+dev.off()
 ```
 
 Log10 Adjusted-PValues with P-Value cutoffs indicated by red lines and perfect agreement by blue lines.
