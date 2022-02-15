@@ -452,6 +452,14 @@ Gene nodes were kept if they formed edges with genes in at least three of the fo
 Genes from complexes or where multiple genes have very similar symbols were collapsed to single entries, noted with an asterisk (*).
 Genes from the differential peptides list are blue.
 
+## Cytoscape
+
+Let's see if we can plot the graph in Cytoscape and get better results.
+
+```{r move_to_cytoscape, eval = FALSE}
+RCy3::createNetworkFromIgraph(multi_collapsed_uka, "UKA")
+```
+
 ## Methods
 
 Downloaded KEGG KGML files for each pathway (MAPK, PI3K, RAS and EGFR) using KEGGREST [@tenenbaumKEGGRESTClientsideREST2021] and extracted all gene product - gene product edges from the pathway using KEGGgraph [@zhangKEGGgraphGraphApproach2009; @zhangKEGGgraph2021; @zhangKEGGgraphApplicationExamples2021a].
